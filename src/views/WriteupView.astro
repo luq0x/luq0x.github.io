@@ -1,0 +1,153 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Tag from '../components/Tag.astro';
+import SeverityTag from '../components/SeverityTag.astro';
+import RewardTag from '../components/RewardTag.astro';
+import Icon from '../components/Icon.astro';
+import { readingTimeOf, slugOf, type Writeup } from '../lib/writeups';
+import { formatDate, isoDate, slugifyTag } from '../lib/format';
+import { profile } from '../config';
+import { localeHref, t, type Locale } from '../i18n';
+
+interface Props {
+  entry: Writeup;
+  lang: Locale;
+  newer: Writeup | null;
+  older: Writeup | null;
+  langTargets: Partial<Record<Locale, string>>;
+}
+
+const { entry, lang, newer, older, langTargets } = Astro.props;
+const s = t(lang);
+const {
+  title,
+  summary,
+  pubDate,
+  updatedDate,
+  tags,
+  platform,
+  difficulty,
+  severity,
+  reward,
+  author,
+} = entry.data;
+const minutes = readingTimeOf(entry);
+const { Content } = await render(entry);
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${title} — ${profile.name}`}
+  description={summary}
+  type="article"
+  publishedTime={pubDate}
+  tags={[...tags]}
+  rail={s.railWriteups}
+  langTargets={langTargets}
+>
+  <a
+    href={localeHref(lang, '/writeups')}
+    class="meta hover:text-blood inline-flex items-center gap-1.5 transition-colors"
+  >
+    <Icon name="arrow" class="h-3 w-3 rotate-180" />
+    {s.backToWriteups}
+  </a>
+
+  <article class="mt-8">
+    <header class="border-rule border-b pb-7">
+      {
+        (tags.length > 0 || severity || reward) && (
+          <ul class="flex flex-wrap gap-1.5">
+            {severity && (
+              <li>
+                <SeverityTag severity={severity} />
+              </li>
+            )}
+            {reward && (
+              <li>
+                <RewardTag reward={reward} />
+              </li>
+            )}
+            {tags.map((tag) => (
+              <li>
+                <Tag name={tag} href={`${localeHref(lang, '/writeups')}?tag=${slugifyTag(tag)}`} />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      <h1
+        class="text-ink mt-4 text-[26px] leading-[1.25] font-medium tracking-[-0.025em] text-balance"
+      >
+        {title}
+      </h1>
+
+      <p class="text-dim mt-3 text-[15px] leading-relaxed">{summary}</p>
+
+      <div class="meta mt-5 flex flex-wrap items-center gap-x-2 gap-y-1">
+        <time datetime={isoDate(pubDate)}>{formatDate(pubDate, lang)}</time>
+        <span class="slash" aria-hidden="true">/</span>
+        <span>{minutes} {s.readingTime}</span>
+        <span class="slash" aria-hidden="true">/</span>
+        <span class="text-dim">{platform}</span>
+        {
+          difficulty && (
+            <>
+              <span class="slash" aria-hidden="true">
+                /
+              </span>
+              <span>{difficulty}</span>
+            </>
+          )
+        }
+        <span class="slash" aria-hidden="true">/</span>
+        <span>{author ?? profile.name}</span>
+      </div>
+
+      {
+        updatedDate && (
+          <p class="meta mt-1.5">
+            {s.updatedOn} {formatDate(updatedDate, lang)}
+          </p>
+        )
+      }
+    </header>
+
+    <div class="prose mt-9">
+      <Content />
+    </div>
+  </article>
+
+  {
+    (newer || older) && (
+      <nav
+        class="border-rule mt-16 grid gap-3 border-t pt-8 sm:grid-cols-2"
+        aria-label={s.otherWriteups}
+      >
+        {older ? (
+          <a
+            href={localeHref(lang, `/writeups/${slugOf(older)}`)}
+            class="border-rule hover:border-blood border p-4 transition-colors"
+          >
+            <span class="meta">{s.previous}</span>
+            <span class="text-ink mt-1.5 block text-[14.5px] leading-snug">{older.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+
+        {newer && (
+          <a
+            href={localeHref(lang, `/writeups/${slugOf(newer)}`)}
+            class="border-rule hover:border-blood border p-4 transition-colors sm:text-right"
+          >
+            <span class="meta">{s.next}</span>
+            <span class="text-ink mt-1.5 block text-[14.5px] leading-snug">{newer.data.title}</span>
+          </a>
+        )}
+      </nav>
+    )
+  }
+</BaseLayout>

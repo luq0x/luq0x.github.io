@@ -1,0 +1,22 @@
+---
+import { slugifyTag } from '../lib/format';
+
+interface Props {
+  name: string;
+  href?: string;
+}
+
+const { name, href } = Astro.props;
+const Element = href ? 'a' : 'span';
+---
+
+<Element
+  href={href}
+  data-tag={slugifyTag(name)}
+  class:list={[
+    'border-rule text-dim inline-flex items-center border px-1.5 py-0.5 font-mono text-[10.5px] tracking-[0.06em] uppercase',
+    href && 'hover:border-blood hover:text-blood transition-colors',
+  ]}
+>
+  {name}
+</Element>

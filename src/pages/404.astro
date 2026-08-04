@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { localeHref, strings } from '../i18n';
+---
+
+<BaseLayout lang="pt-br" title="404" description={strings['pt-br'].notFoundBody} rail="迷子">
+  <div class="py-16">
+    <p class="meta text-blood">HTTP 404</p>
+
+    <h1 class="text-ink mt-3 text-[22px] font-medium tracking-[-0.02em]">
+      {strings['pt-br'].notFoundTitle}
+    </h1>
+    <p class="text-dim mt-2 max-w-[46ch] text-[14.5px]">{strings['pt-br'].notFoundBody}</p>
+
+    <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13px]">
+      <a href={localeHref('pt-br')} class="link-underline text-ink">
+        {strings['pt-br'].backHome}
+      </a>
+      <a href={localeHref('pt-br', '/writeups')} class="link-underline text-ink">
+        {strings['pt-br'].writeupsTitle}
+      </a>
+    </div>
+
+    <hr class="border-rule mt-12" />
+
+    <h2 class="text-ink mt-12 text-[22px] font-medium tracking-[-0.02em]">
+      {strings.en.notFoundTitle}
+    </h2>
+    <p class="text-dim mt-2 max-w-[46ch] text-[14.5px]">{strings.en.notFoundBody}</p>
+
+    <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13px]">
+      <a href={localeHref('en')} class="link-underline text-ink">{strings.en.backHome}</a>
+      <a href={localeHref('en', '/writeups')} class="link-underline text-ink">
+        {strings.en.writeupsTitle}
+      </a>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,83 @@
+---
+import Tag from './Tag.astro';
+import SeverityTag from './SeverityTag.astro';
+import RewardTag from './RewardTag.astro';
+import { formatDate, isoDate, slugifyTag } from '../lib/format';
+import { readingTimeOf, slugOf, type Writeup } from '../lib/writeups';
+import { localeHref, t, type Locale } from '../i18n';
+
+interface Props {
+  entry: Writeup;
+  lang: Locale;
+}
+
+const { entry, lang } = Astro.props;
+const s = t(lang);
+const { title, summary, pubDate, tags, platform, difficulty, severity, reward, author } =
+  entry.data;
+const minutes = readingTimeOf(entry);
+const href = localeHref(lang, `/writeups/${slugOf(entry)}`);
+const hasChips = tags.length > 0 || severity || reward;
+---
+
+<article
+  class="group border-rule border-b py-7"
+  data-writeup
+  data-tags={tags.map(slugifyTag).join(' ')}
+>
+  <div class="meta flex flex-wrap items-center gap-x-2 gap-y-1">
+    <time datetime={isoDate(pubDate)}>{formatDate(pubDate, lang)}</time>
+    <span class="slash" aria-hidden="true">/</span>
+    <span>{minutes} {s.readingTime}</span>
+    <span class="slash" aria-hidden="true">/</span>
+    <span class="text-dim">{platform}</span>
+    {
+      difficulty && (
+        <>
+          <span class="slash" aria-hidden="true">
+            /
+          </span>
+          <span>{difficulty}</span>
+        </>
+      )
+    }
+    {
+      author && (
+        <>
+          <span class="slash" aria-hidden="true">
+            /
+          </span>
+          <span>{author}</span>
+        </>
+      )
+    }
+  </div>
+
+  <h2 class="text-ink mt-2 text-[17px] leading-snug font-medium tracking-[-0.015em]">
+    <a href={href} class="link-underline">{title}</a>
+  </h2>
+
+  <p class="text-dim mt-1.5 text-[14px] leading-relaxed">{summary}</p>
+
+  {
+    hasChips && (
+      <ul class="mt-3 flex flex-wrap gap-1.5">
+        {severity && (
+          <li>
+            <SeverityTag severity={severity} />
+          </li>
+        )}
+        {reward && (
+          <li>
+            <RewardTag reward={reward} />
+          </li>
+        )}
+        {tags.map((tag) => (
+          <li>
+            <Tag name={tag} />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</article>

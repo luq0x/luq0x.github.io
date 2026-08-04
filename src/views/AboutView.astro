@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import { profile, certifications } from '../config';
+import { localeHref, locales, t, type Locale } from '../i18n';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const s = t(lang);
+
+const langTargets = Object.fromEntries(
+  locales.map((locale) => [locale, localeHref(locale, '/about')]),
+) as Record<Locale, string>;
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${s.aboutTitle} — ${s.siteTitle}`}
+  description={s.aboutDescription}
+  rail={s.railAbout}
+  langTargets={langTargets}
+>
+  <header>
+    <h1 class="text-ink text-[22px] font-medium tracking-[-0.02em]">{s.aboutTitle}</h1>
+  </header>
+
+  <div class="text-dim mt-8 space-y-4 text-[15px] leading-relaxed">
+    {s.bio.map((paragraph) => <p>{paragraph}</p>)}
+  </div>
+
+  {
+    certifications.length > 0 && (
+      <section class="border-rule mt-14 border-t pt-8">
+        <h2 class="meta">{s.certifications}</h2>
+        <ul class="mt-4 space-y-2">
+          {certifications.map((cert) => (
+            <li class="flex flex-wrap items-baseline gap-x-3">
+              <span class="text-ink text-[14.5px]">{cert.name}</span>
+              <span class="meta">
+                {cert.issuer} / {cert.year}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <div class="border-rule mt-12 border-t pt-6">
+    <SocialLinks lang={lang} class="-ml-2" />
+  </div>
+</BaseLayout>

@@ -1,0 +1,44 @@
+---
+import Icon from './Icon.astro';
+import { socials } from '../config';
+import { localeHref, type Locale } from '../i18n';
+
+interface Props {
+  lang: Locale;
+  class?: string;
+  showRss?: boolean;
+}
+
+const { lang, class: className = '', showRss = true } = Astro.props;
+const isMail = (href: string) => href.startsWith('mailto:');
+const item =
+  'flex h-9 w-9 items-center justify-center text-hush transition-colors duration-150 hover:text-blood focus-visible:text-blood';
+---
+
+<ul class={`flex flex-wrap items-center gap-1 ${className}`}>
+  {
+    socials.map((social) => (
+      <li>
+        <a
+          href={social.href}
+          aria-label={social.label}
+          title={social.label}
+          rel={isMail(social.href) ? undefined : 'me noopener'}
+          target={isMail(social.href) ? undefined : '_blank'}
+          class={item}
+        >
+          <Icon name={social.icon} />
+        </a>
+      </li>
+    ))
+  }
+  {
+    showRss && (
+      <li>
+        <a href={localeHref(lang, '/rss.xml')} aria-label="RSS" title="RSS" class={item}>
+          <Icon name="rss" />
+        </a>
+      </li>
+    )
+  }
+</ul>

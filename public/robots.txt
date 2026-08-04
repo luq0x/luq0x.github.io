@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://luq0x.github.io/sitemap-index.xml

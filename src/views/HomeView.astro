@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Wordmark from '../components/Wordmark.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import Header from '../components/Header.astro';
+import BountyTicker from '../components/BountyTicker.astro';
+import Icon from '../components/Icon.astro';
+import { profile } from '../config';
+import { compactDate, isoDate } from '../lib/format';
+import { url } from '../lib/path';
+import { getWriteups, slugOf } from '../lib/writeups';
+import { localeHref, t, type Locale } from '../i18n';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const s = t(lang);
+const latest = (await getWriteups(lang)).slice(0, 3);
+const year = new Date().getFullYear();
+---
+
+<BaseLayout lang={lang} title={s.siteTitle} bare>
+  <div class="flex min-h-dvh flex-col">
+    <Header lang={lang} showMark={false} />
+
+    <div class="mx-auto flex w-full max-w-[680px] flex-1 flex-col justify-center px-5 py-16">
+      <div class="flex items-start gap-5">
+        <span class="bg-blood w-px shrink-0 self-stretch" aria-hidden="true"></span>
+
+        <div>
+          <img
+            src={url(profile.avatar)}
+            alt=""
+            width="64"
+            height="64"
+            class="border-rule mb-5 h-16 w-16 border"
+          />
+
+          <h1><Wordmark size="lg" /></h1>
+
+          <p class="text-blood mt-2 text-[15px]">{s.tagline}</p>
+
+          <p class="meta mt-3 flex items-center gap-2">
+            <span class="jp text-hush text-[11px]">{s.railHome}</span>
+            <span class="slash" aria-hidden="true">/</span>
+            <span>{profile.location}</span>
+          </p>
+
+          <SocialLinks lang={lang} class="mt-5 -ml-2" />
+        </div>
+      </div>
+
+      <BountyTicker lang={lang} />
+
+      {
+        latest.length > 0 && (
+          <section class="border-rule mt-12 border-t pt-8" aria-labelledby="latest">
+            <h2 id="latest" class="meta">
+              {s.latestWriteups}
+            </h2>
+
+            <ul class="mt-4 space-y-3">
+              {latest.map((entry) => (
+                <li class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-4">
+                  <time
+                    datetime={isoDate(entry.data.pubDate)}
+                    class="meta shrink-0 whitespace-nowrap sm:w-24"
+                  >
+                    {compactDate(entry.data.pubDate)}
+                  </time>
+                  <a
+                    href={localeHref(lang, `/writeups/${slugOf(entry)}`)}
+                    class="link-underline text-ink text-[14.5px]"
+                  >
+                    {entry.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href={localeHref(lang, '/writeups')}
+              class="text-blood mt-6 inline-flex items-center gap-1.5 text-[13px] transition-opacity hover:opacity-75"
+            >
+              {s.allWriteups}
+              <Icon name="arrow" class="h-3.5 w-3.5" />
+            </a>
+          </section>
+        )
+      }
+
+      <p class="meta mt-16">© {year} {profile.name}</p>
+    </div>
+  </div>
+</BaseLayout>

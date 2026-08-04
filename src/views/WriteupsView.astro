@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WriteupCard from '../components/WriteupCard.astro';
+import { getWriteups, collectTags } from '../lib/writeups';
+import { slugifyTag } from '../lib/format';
+import { localeHref, locales, t, type Locale } from '../i18n';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const s = t(lang);
+
+const entries = await getWriteups(lang);
+const tags = collectTags(entries);
+const PAGE_SIZE = 10;
+
+const langTargets = Object.fromEntries(
+  locales.map((locale) => [locale, localeHref(locale, '/writeups')]),
+) as Record<Locale, string>;
+
+let lastYear: number | null = null;
+const rows = entries.map((entry) => {
+  const year = entry.data.pubDate.getUTCFullYear();
+  const startsYear = year !== lastYear;
+  lastYear = year;
+  return { entry, year, startsYear };
+});
+
+const chip =
+  'border border-rule px-2 py-1 font-mono text-[10.5px] tracking-[0.06em] text-dim uppercase transition-colors hover:text-ink aria-pressed:border-blood aria-pressed:text-blood';
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${s.writeupsTitle} — ${s.siteTitle}`}
+  description={s.writeupsDescription}
+  rail={s.railWriteups}
+  langTargets={langTargets}
+>
+  <header>
+    <h1 class="text-ink text-[22px] font-medium tracking-[-0.02em]">{s.writeupsTitle}</h1>
+    <p class="text-dim mt-2 text-[14.5px]">
+      {entries.length}{' '}
+      {entries.length === 1 ? s.postSingular : s.postPlural} · {s.writeupsIntro}
+    </p>
+  </header>
+
+  {
+    tags.length > 0 && (
+      <div class="border-rule mt-8 border-y py-3">
+        <h2 class="sr-only">{s.filterHeading}</h2>
+        <ul class="flex flex-wrap gap-1.5">
+          <li>
+            <button type="button" data-tag-filter="all" aria-pressed="true" class={chip}>
+              {s.filterAll} <span class="text-hush">{entries.length}</span>
+            </button>
+          </li>
+          {tags.map((tag) => (
+            <li>
+              <button
+                type="button"
+                data-tag-filter={slugifyTag(tag.name)}
+                aria-pressed="false"
+                class={chip}
+              >
+                {tag.name} <span class="text-hush">{tag.count}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  <div class="mt-4" data-list>
+    {
+      rows.map(({ entry, year, startsYear }) => (
+        <>
+          {startsYear && (
+            <h2 class="meta pt-10 pb-3 first:pt-4" data-year={year}>
+              {year}
+            </h2>
+          )}
+          <WriteupCard entry={entry} lang={lang} />
+        </>
+      ))
+    }
+  </div>
+
+  <p class="text-dim mt-10 hidden text-[14.5px]" data-empty>{s.emptyTag}</p>
+
+  <div class="mt-10 hidden" data-more-wrapper>
+    <button
+      type="button"
+      data-more
+      class="border-rule text-dim hover:border-blood hover:text-blood w-full border py-2.5 text-[13px] transition-colors"
+    >
+      {s.loadMore}
+    </button>
+  </div>
+
+  {entries.length === 0 && <p class="text-dim mt-10 text-[14.5px]">{s.emptyList}</p>}
+
+  <script is:inline define:vars={{ PAGE_SIZE }}>
+    (() => {
+      const list = document.querySelector('[data-list]');
+      if (!list) return;
+
+      const cards = Array.from(list.querySelectorAll('[data-writeup]'));
+      const years = Array.from(list.querySelectorAll('[data-year]'));
+      const buttons = Array.from(document.querySelectorAll('[data-tag-filter]'));
+      const moreWrapper = document.querySelector('[data-more-wrapper]');
+      const moreButton = document.querySelector('[data-more]');
+      const empty = document.querySelector('[data-empty]');
+
+      let activeTag = new URLSearchParams(location.search).get('tag') || 'all';
+      if (activeTag !== 'all' && !buttons.some((b) => b.dataset.tagFilter === activeTag)) {
+        activeTag = 'all';
+      }
+      let visible = PAGE_SIZE;
+
+      const matches = (card) =>
+        activeTag === 'all' || (card.dataset.tags || '').split(' ').includes(activeTag);
+
+      function render() {
+        let shown = 0;
+        let total = 0;
+
+        for (const card of cards) {
+          if (!matches(card)) {
+            card.hidden = true;
+            continue;
+          }
+          total += 1;
+          const show = shown < visible;
+          card.hidden = !show;
+          if (show) shown += 1;
+        }
+
+        for (const year of years) {
+          let node = year.nextElementSibling;
+          let has = false;
+          while (node && !node.hasAttribute('data-year')) {
+            if (node.hasAttribute('data-writeup') && !node.hidden) {
+              has = true;
+              break;
+            }
+            node = node.nextElementSibling;
+          }
+          year.hidden = !has;
+        }
+
+        for (const button of buttons) {
+          button.setAttribute('aria-pressed', String(button.dataset.tagFilter === activeTag));
+        }
+
+        if (empty) empty.classList.toggle('hidden', total > 0);
+        if (moreWrapper) moreWrapper.classList.toggle('hidden', shown >= total);
+      }
+
+      for (const button of buttons) {
+        button.addEventListener('click', () => {
+          activeTag = button.dataset.tagFilter;
+          visible = PAGE_SIZE;
+
+          const params = new URLSearchParams(location.search);
+          if (activeTag === 'all') params.delete('tag');
+          else params.set('tag', activeTag);
+          const query = params.toString();
+          history.replaceState(null, '', query ? `?${query}` : location.pathname);
+
+          render();
+        });
+      }
+
+      moreButton?.addEventListener('click', () => {
+        visible += PAGE_SIZE;
+        render();
+      });
+
+      render();
+    })();
+  </script>
+</BaseLayout>

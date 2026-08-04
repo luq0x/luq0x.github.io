@@ -1,0 +1,77 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Rail from '../components/Rail.astro';
+import { t, type Locale } from '../i18n';
+import '../styles/global.css';
+
+interface Props {
+  lang: Locale;
+  title: string;
+  description?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  tags?: string[];
+  rail?: string;
+  bare?: boolean;
+  langTargets?: Partial<Record<Locale, string>>;
+}
+
+const {
+  lang,
+  title,
+  description,
+  type,
+  publishedTime,
+  tags,
+  rail,
+  bare = false,
+  langTargets,
+} = Astro.props;
+
+const s = t(lang);
+---
+
+<!doctype html>
+<html lang={s.htmlLang}>
+  <head>
+    <BaseHead
+      lang={lang}
+      title={title}
+      description={description}
+      type={type}
+      publishedTime={publishedTime}
+      tags={tags}
+      langTargets={langTargets}
+    />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <div class="wallpaper-glow" aria-hidden="true"></div>
+    <div class="wallpaper" aria-hidden="true"></div>
+
+    <a
+      href="#conteudo"
+      class="focus:bg-raise sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:px-3 focus:py-2 focus:text-sm"
+    >
+      {s.skipToContent}
+    </a>
+
+    {!bare && <Header lang={lang} langTargets={langTargets} />}
+
+    <main id="conteudo" class:list={['flex-1', !bare && 'w-full']}>
+      {
+        bare ? (
+          <slot />
+        ) : (
+          <div class="relative mx-auto w-full max-w-[680px] px-5 py-14">
+            {rail && <Rail label={rail} />}
+            <slot />
+          </div>
+        )
+      }
+    </main>
+
+    {!bare && <Footer lang={lang} />}
+  </body>
+</html>

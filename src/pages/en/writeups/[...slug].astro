@@ -1,0 +1,32 @@
+---
+import WriteupView from '../../../views/WriteupView.astro';
+import { getWriteups, slugOf } from '../../../lib/writeups';
+import { localeHref } from '../../../i18n';
+
+export async function getStaticPaths() {
+  const entries = await getWriteups('en');
+  const translated = new Set((await getWriteups('pt-br')).map(slugOf));
+
+  return entries.map((entry, index) => {
+    const slug = slugOf(entry);
+    return {
+      params: { slug },
+      props: {
+        entry,
+        newer: entries[index - 1] ?? null,
+        older: entries[index + 1] ?? null,
+        langTargets: {
+          en: localeHref('en', `/writeups/${slug}`),
+          'pt-br': translated.has(slug)
+            ? localeHref('pt-br', `/writeups/${slug}`)
+            : localeHref('pt-br', '/writeups'),
+        },
+      },
+    };
+  });
+}
+
+const { entry, newer, older, langTargets } = Astro.props;
+---
+
+<WriteupView entry={entry} lang="en" newer={newer} older={older} langTargets={langTargets} />

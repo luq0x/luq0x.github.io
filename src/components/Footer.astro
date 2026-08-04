@@ -1,0 +1,18 @@
+---
+import { profile } from '../config';
+import { localeHref, type Locale } from '../i18n';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="border-rule mt-24 border-t">
+  <div class="mx-auto flex max-w-[680px] flex-wrap items-center justify-between gap-3 px-5 py-6">
+    <p class="meta">© {year} {profile.name}</p>
+    <a href={localeHref(lang, '/rss.xml')} class="meta hover:text-blood transition-colors">RSS</a>
+  </div>
+</footer>

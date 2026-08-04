@@ -1,0 +1,74 @@
+---
+import { profile } from '../config';
+import { url } from '../lib/path';
+import { locales, localeHref, t, type Locale } from '../i18n';
+
+interface Props {
+  lang: Locale;
+  title: string;
+  description?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  tags?: string[];
+  langTargets?: Partial<Record<Locale, string>>;
+}
+
+const {
+  lang,
+  title,
+  description,
+  type = 'website',
+  publishedTime,
+  tags = [],
+  langTargets,
+} = Astro.props;
+
+const s = t(lang);
+const desc = description ?? s.siteDescription;
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.site).href;
+const ogImage = new URL(url(profile.ogImage), Astro.site).href;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{title}</title>
+<meta name="description" content={desc} />
+<link rel="canonical" href={canonical} />
+
+<link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+<link rel="sitemap" href={url('/sitemap-index.xml')} />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={s.siteTitle}
+  href={new URL(localeHref(lang, '/rss.xml'), Astro.site).href}
+/>
+
+{
+  locales.map((locale) => (
+    <link
+      rel="alternate"
+      hreflang={locale === 'en' ? 'en-US' : 'pt-BR'}
+      href={new URL(langTargets?.[locale] ?? localeHref(locale), Astro.site).href}
+    />
+  ))
+}
+
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={desc} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:site_name" content={s.siteTitle} />
+<meta property="og:locale" content={s.ogLocale} />
+{publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+{tags.map((tag) => <meta property="article:tag" content={tag} />)}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={desc} />
+<meta name="twitter:image" content={ogImage} />
+
+<meta name="theme-color" content="#191918" />

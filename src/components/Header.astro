@@ -1,0 +1,67 @@
+---
+import Wordmark from './Wordmark.astro';
+import LangSwitch from './LangSwitch.astro';
+import { localeHref, t, type Locale } from '../i18n';
+
+interface Props {
+  lang: Locale;
+  langTargets?: Partial<Record<Locale, string>>;
+  showMark?: boolean;
+}
+
+const { lang, langTargets, showMark = true } = Astro.props;
+const s = t(lang);
+
+const nav = [
+  { label: s.navWriteups, href: localeHref(lang, '/writeups') },
+  { label: s.navAbout, href: localeHref(lang, '/about') },
+];
+
+const current = Astro.url.pathname.replace(/\/$/, '');
+const isActive = (href: string) => {
+  const target = href.replace(/\/$/, '');
+  return current === target || current.startsWith(`${target}/`);
+};
+---
+
+<header class="bg-paper border-rule sticky top-0 z-30 border-b">
+  <div
+    class:list={[
+      'mx-auto flex h-14 max-w-[680px] items-center gap-6 px-5',
+      showMark ? 'justify-between' : 'justify-end',
+    ]}
+  >
+    {
+      showMark && (
+        <a href={localeHref(lang)} class="transition-opacity hover:opacity-80">
+          <Wordmark />
+        </a>
+      )
+    }
+
+    <div class="flex items-center gap-6">
+      <nav aria-label={s.navPrimary}>
+        <ul class="flex items-center gap-5">
+          {
+            nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                  class:list={[
+                    'hover:text-ink text-[13px] transition-colors',
+                    isActive(item.href) ? 'text-ink' : 'text-hush',
+                  ]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <LangSwitch lang={lang} targets={langTargets} />
+    </div>
+  </div>
+</header>

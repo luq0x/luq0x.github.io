@@ -1,0 +1,25 @@
+---
+import type { Severity } from '../config';
+
+interface Props {
+  severity: Severity;
+}
+
+const { severity } = Astro.props;
+
+const tone: Record<Severity, string> = {
+  Critical: 'border-blood text-blood',
+  High: 'border-blood/60 text-blood/90',
+  Medium: 'border-rule text-dim',
+  Low: 'border-rule text-hush',
+};
+---
+
+<span
+  class:list={[
+    'inline-flex items-center border px-1.5 py-0.5 font-mono text-[10.5px] tracking-[0.06em] uppercase',
+    tone[severity],
+  ]}
+>
+  {severity}
+</span>
