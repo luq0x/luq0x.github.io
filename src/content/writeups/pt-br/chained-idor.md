@@ -100,3 +100,9 @@ Lições aprendidas?
 - Severidade: Alta
 
 Keep Hacking!
+
+---
+
+## Comprovante do bounty
+
+![Comprovante do bounty](../../../assets/writeups/001/bounty-proof.png)
