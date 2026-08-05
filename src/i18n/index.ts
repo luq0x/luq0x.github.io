@@ -13,9 +13,8 @@ export const strings = {
   'pt-br': {
     htmlLang: 'pt-BR',
     ogLocale: 'pt_BR',
-    siteTitle: 'luq0x.com',
-    siteDescription:
-      'Portfólio e writeups de segurança ofensiva: bug bounty, aplicações web, APIs e escalação de privilégio.',
+    siteTitle: 'Luq0x',
+    siteDescription: "Luq0x's blog: Offensive Security Research",
     tagline: 'security researcher · bug bounty hunter',
     railHome: '東京',
     railWriteups: '記録',
@@ -60,9 +59,8 @@ export const strings = {
   en: {
     htmlLang: 'en-US',
     ogLocale: 'en_US',
-    siteTitle: 'luq0x — security research',
-    siteDescription:
-      'Offensive security portfolio and writeups: bug bounty, web applications, APIs and privilege escalation.',
+    siteTitle: 'Luq0x',
+    siteDescription: "Luq0x's blog: Offensive Security Research",
     tagline: 'security researcher · bug bounty hunter',
     railHome: '東京',
     railWriteups: '記録',

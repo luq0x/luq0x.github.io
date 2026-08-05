@@ -141,23 +141,3 @@ export const certifications = [
   { name: 'eWPTX', issuer: 'INE', year: '2025' },
   { name: 'eJPT', issuer: 'INE', year: '2025' },
 ];
-
-import { defineCollection, z } from 'astro:content';
-
-const writeups = defineCollection({
-  type: 'content',
-  schema: ({ image }) => z.object({
-    title: z.string(),
-    summary: z.string(),
-    pubDate: z.date(),
-    tags: z.array(z.string()),
-    platform: z.string(),
-    severity: z.string(),
-    reward: z.string().optional(),
-    cover: image().optional(),
-    coverAlt: z.string().optional(),
-    draft: z.boolean().default(false),
-  }),
-});
-
-export const collections = { writeups };

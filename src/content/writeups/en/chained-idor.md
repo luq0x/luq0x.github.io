@@ -6,6 +6,8 @@ tags: ['Web', 'IDOR']
 platform: 'Bug Bounty'
 severity: 'High'
 reward: '€1,875'
+cover: '../../../assets/writeups/001/masspii-cover.png'
+coverAlt: 'IDOR chain diagram'
 draft: false
 ---
 
