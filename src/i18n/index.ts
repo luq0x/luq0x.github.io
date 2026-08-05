@@ -50,10 +50,10 @@ export const strings = {
     otherWriteups: 'Outros writeups',
     bio: [
       'E aí! Sou o Lucas, também conhecido como Luq, tenho 23 anos, sou brasileiro e apaixonado por hacking.',
-      'Atualmente, trabalho como pentester de senioridade pleno focado em Web, API e Mobile. No tempo livre, atuo como bug hunter e security researcher, me aprofundando em todo o tipo de aplicação.',
-      'Minha vocação pra área parte desde a infância, onde já era fascinado por hacking. Hoje minha vida é mais ou menos assim: pentester de dia, bug hunter de noite (e quase uma pessoa normal nos finais de semana).',
+      'Atualmente, trabalho como pentester focado em Web, API e Mobile. No tempo livre, atuo como bug hunter e security researcher, me aprofundando em todo e qualquer tipo de aplicação.',
+      'Minha vocação pra área parte desde a infância, onde já era fascinado por hacking. E hoje, minha vida é mais ou menos assim: pentester de dia, bug hunter de noite (e quase uma pessoa normal nos finais de semana).',
       'Em pouco mais de 1 ano me aprofundando em segurança ofensiva e bug bounty, tive algumas conquistas legais pra mim: entrei pro Top 500 da Intigriti, coleciono alguns Hall of Fames e já alcancei 5 dígitos de recompensas.',
-      'Esse blog aqui eu uso pra divulgar e compartilhar conhecimentos e coisas legais que eu for encontrando durante minha trajetória na área :)',
+      'Esse blog aqui eu uso pra compartilhar conhecimentos e coisas legais que eu encontro durante minha trajetória na área :)',
     ],
   },
   en: {
@@ -96,7 +96,7 @@ export const strings = {
     otherWriteups: 'Other writeups',
     bio: [
       "Hey! I'm Lucas, also known as Luq. I'm 23, Brazilian, and obsessed with hacking.",
-      'I currently work as a mid-level (pleno) pentester focused on Web, API and Mobile. In my free time, I work as a bug hunter and security researcher, digging into pretty much any kind of application.',
+      'I currently work as a pentester focused on Web, API and Mobile. In my free time, I work as a bug hunter and security researcher, digging into pretty much any kind of application.',
       "My drive for this comes from childhood — I've been fascinated by hacking since I was a kid. My life today is basically: pentester by day, bug hunter by night (and almost a normal person on weekends).",
       "In just over a year deep-diving into offensive security and bug bounty, I've landed some achievements I'm proud of: breaking into the Intigriti Top 500, collecting some Hall of Fames, and hitting 5-figure rewards.",
       'I use this blog to share knowledge and cool stuff I come across along the way :)',

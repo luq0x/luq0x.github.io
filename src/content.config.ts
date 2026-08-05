@@ -12,7 +12,7 @@ const writeups = defineCollection({
       updatedDate: z.coerce.date().optional(),
       tags: z.array(z.string()).default([]),
       platform: z
-        .enum(['HackTheBox', 'TryHackMe', 'Bug Bounty', 'CTF', 'Lab', 'Research'])
+        .enum(['HackTheBox', 'TryHackMe', 'Intigriti', 'Bug Bounty', 'CTF', 'Lab', 'Research'])
         .default('CTF'),
       difficulty: z.enum(['Easy', 'Medium', 'Hard', 'Insane']).optional(),
       severity: z.enum(['Critical', 'High', 'Medium', 'Low']).optional(),

@@ -14,7 +14,7 @@ export const socials = [
     href: 'https://app.intigriti.com/researcher/profile/luq0x',
   },
   { label: 'X', icon: 'x', href: 'https://x.com/luq0xss' },
-  { label: 'LinkedIn', icon: 'linkedin', href: 'https://linkedin.com/in/luq0x' },
+  { label: 'LinkedIn', icon: 'linkedin', href: 'https://www.linkedin.com/in/lucas-goncalo-de-morais/' },
   { label: 'E-mail', icon: 'email', href: 'mailto:luq0x@proton.me' },
 ] as const;
 
