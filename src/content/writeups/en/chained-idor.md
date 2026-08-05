@@ -97,3 +97,9 @@ Lessons learned?
 - Severity: High
 
 Keep Hacking!
+
+---
+
+## Bounty proof
+
+![Bounty proof](../../../assets/writeups/001/bounty-proof.png)
