@@ -1,0 +1,193 @@
+---
+import Wordmark from './Wordmark.astro';
+import LangSwitch from './LangSwitch.astro';
+import SocialLinks from './SocialLinks.astro';
+import { profile } from '../config';
+import { url } from '../lib/path';
+import { localeHref, t, type Locale } from '../i18n';
+
+interface Props {
+  lang: Locale;
+  rail?: string;
+  langTargets?: Partial<Record<Locale, string>>;
+}
+
+const { lang, rail, langTargets } = Astro.props;
+const s = t(lang);
+
+const nav = [
+  { label: s.navHome, jp: 'ホーム', href: localeHref(lang), exact: true },
+  { label: s.navWriteups, jp: s.railWriteups, href: localeHref(lang, '/writeups'), exact: false },
+  { label: s.navAbout, jp: s.railAbout, href: localeHref(lang, '/about'), exact: false },
+];
+
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string, exact: boolean) => {
+  const target = href.replace(/\/$/, '') || '/';
+  if (exact) return current === target;
+  return current === target || current.startsWith(`${target}/`);
+};
+---
+
+<header class="topbar border-rule sticky top-0 z-30 border-b lg:hidden">
+  <div class="flex h-14 items-center justify-between gap-4 px-5">
+    <a href={localeHref(lang)} class="flex items-center gap-3">
+      <img
+        src={url(profile.avatar)}
+        alt=""
+        width="28"
+        height="28"
+        class="border-rule h-7 w-7 border"
+      />
+      <Wordmark />
+    </a>
+
+    <div class="flex items-center gap-4">
+      <LangSwitch lang={lang} targets={langTargets} />
+      <button
+        type="button"
+        class="border-rule hover:border-blood flex h-9 w-9 items-center justify-center border transition-colors"
+        aria-controls="sidebar"
+        aria-expanded="false"
+        aria-label={s.openMenu}
+        data-menu-open
+      >
+        <span class="flex w-4 flex-col gap-[5px]" aria-hidden="true">
+          <span class="bg-ink block h-px w-full"></span>
+          <span class="bg-ink block h-px w-2/3"></span>
+          <span class="bg-blood block h-px w-full"></span>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside id="sidebar" class="sidebar" data-open="false" aria-label={s.navPrimary}>
+  <div class="flex h-14 items-center justify-between px-5 lg:hidden">
+    <span class="meta jp">{s.railHome}</span>
+    <button
+      type="button"
+      class="border-rule hover:border-blood hover:text-blood text-dim flex h-9 w-9 items-center justify-center border transition-colors"
+      aria-label={s.closeMenu}
+      data-menu-close
+    >
+      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M5 5l14 14M19 5L5 19"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-6 pb-6 lg:pt-10">
+    <a href={localeHref(lang)} class="group hidden items-center gap-3.5 lg:flex">
+      <span class="corners border-rule bg-raise inline-block border p-[3px]">
+        <img src={url(profile.avatar)} alt="" width="44" height="44" class="block h-11 w-11" />
+      </span>
+      <span class="flex flex-col">
+        <Wordmark size="md" />
+        <span class="meta mt-1.5 flex items-center gap-1.5 text-[10px]">
+          <span class="jp text-hush tracking-[0.2em]">{s.railHome}</span>
+          <span class="slash">/</span>
+          {profile.location}
+        </span>
+      </span>
+    </a>
+
+    <nav class="mt-2 lg:mt-12">
+      <p class="meta mb-2 text-[10px]">// index</p>
+      <ul class="border-rule border-t">
+        {
+          nav.map((item, index) => (
+            <li>
+              <a
+                href={item.href}
+                class="nav-item"
+                aria-current={isActive(item.href, item.exact) ? 'page' : undefined}
+              >
+                <span class="nav-index meta text-[10px]">{String(index + 1).padStart(2, '0')}</span>
+                <span class="text-[22px] font-medium tracking-[-0.02em] lg:text-[14px] lg:tracking-normal">
+                  {item.label}
+                </span>
+                <span class="jp text-hush text-[10px] tracking-[0.2em]">{item.jp}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    {
+      rail && (
+        <div
+          class="pointer-events-none mt-10 hidden flex-1 items-center justify-center select-none lg:flex"
+          aria-hidden="true"
+        >
+          <span class="vertical jp outline-text text-[64px] leading-none tracking-[0.15em]">
+            {rail}
+          </span>
+        </div>
+      )
+    }
+
+    <div class="mt-auto space-y-5 pt-10">
+      <div class="panel space-y-2.5 px-3.5 py-3">
+        <p class="meta flex items-center gap-2.5 text-[10px]">
+          <span class="bg-blood animate-pulse-dot h-1.5 w-1.5 rounded-full"></span>
+          <span class="text-ink">{s.status}</span>
+          <span class="slash">/</span>
+          <span>{profile.location}</span>
+        </p>
+        <p class="meta flex items-center justify-between text-[10px]">
+          <span>{s.localTime}</span>
+          <span class="text-dim" data-clock>BRT --:--:--</span>
+        </p>
+      </div>
+
+      <SocialLinks lang={lang} grid class="-mx-2 justify-items-start" />
+
+      <div class="hidden items-center justify-between lg:flex">
+        <LangSwitch lang={lang} targets={langTargets} />
+        <span class="meta text-[10px]">v{new Date().getFullYear()}</span>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<script is:inline>
+  (() => {
+    const sidebar = document.getElementById('sidebar');
+    const openButton = document.querySelector('[data-menu-open]');
+    const closeButton = document.querySelector('[data-menu-close]');
+    if (!sidebar || !openButton) return;
+
+    const setOpen = (open) => {
+      sidebar.dataset.open = String(open);
+      openButton.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('menu-open', open);
+      if (open) closeButton?.focus();
+      else openButton.focus({ preventScroll: true });
+    };
+
+    openButton.addEventListener('click', () => setOpen(true));
+    closeButton?.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && sidebar.dataset.open === 'true') setOpen(false);
+    });
+    matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
+      if (event.matches && sidebar.dataset.open === 'true') setOpen(false);
+    });
+
+    const clock = document.querySelector('[data-clock]');
+    if (clock) {
+      const format = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'America/Sao_Paulo',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      });
+      const tick = () => (clock.textContent = `BRT ${format.format(new Date())}`);
+      tick();
+      setInterval(tick, 1000);
+    }
+  })();
+</script>

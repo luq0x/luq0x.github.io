@@ -1,13 +1,15 @@
 ---
 interface Props {
-  size?: 'sm' | 'lg';
+  size?: 'sm' | 'md' | 'lg';
   class?: string;
 }
 
 const { size = 'sm', class: className = '' } = Astro.props;
-const scale = size === 'lg' ? 'text-[44px] sm:text-[52px]' : 'text-[15px]';
+const scale = {
+  sm: 'text-[15px]',
+  md: 'text-[19px] leading-none',
+  lg: 'text-[44px] sm:text-[52px]',
+}[size];
 ---
 
-<span class:list={['text-ink font-medium tracking-[-0.03em]', scale, className]}>
-  luq0x
-</span>
+<span class:list={['text-ink font-medium tracking-[-0.03em]', scale, className]}> luq0x </span>

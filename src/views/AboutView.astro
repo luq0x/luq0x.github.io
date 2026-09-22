@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SocialLinks from '../components/SocialLinks.astro';
-import { profile, certifications } from '../config';
+import { certifications } from '../config';
 import { localeHref, locales, t, type Locale } from '../i18n';
 
 interface Props {
@@ -21,6 +21,7 @@ const langTargets = Object.fromEntries(
   title={`${s.aboutTitle} — ${s.siteTitle}`}
   description={s.aboutDescription}
   rail={s.railAbout}
+  width="read"
   langTargets={langTargets}
 >
   <header>
