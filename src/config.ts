@@ -3,6 +3,7 @@ export const profile = {
   short: 'luq',
   location: 'BRAZIL',
   avatar: '/icon.jpeg',
+  photo: '/photo.png',
   ogImage: '/og.png',
 };
 
@@ -34,6 +35,13 @@ export const bounties: {
   date: string;
   href?: string;
 }[] = [
+  {
+    program: 'Private',
+    type: 'Account Takeover',
+    severity: 'Critical',
+    reward: '€700',
+    date: '2026.09.21',
+  },
   {
     program: 'Private',
     type: 'Account Takeover',

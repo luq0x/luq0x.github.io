@@ -37,7 +37,7 @@ const isActive = (href: string, exact: boolean) => {
         alt=""
         width="28"
         height="28"
-        class="border-rule h-7 w-7 border"
+        class="border-rule h-7 w-7 border object-cover"
       />
       <Wordmark />
     </a>
@@ -80,7 +80,13 @@ const isActive = (href: string, exact: boolean) => {
   <div class="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-6 pb-6 lg:pt-10">
     <a href={localeHref(lang)} class="group hidden items-center gap-3.5 lg:flex">
       <span class="corners border-rule bg-raise inline-block border p-[3px]">
-        <img src={url(profile.avatar)} alt="" width="44" height="44" class="block h-11 w-11" />
+        <img
+          src={url(profile.avatar)}
+          alt=""
+          width="44"
+          height="44"
+          class="block h-11 w-11 object-cover"
+        />
       </span>
       <span class="flex flex-col">
         <Wordmark size="md" />
