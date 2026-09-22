@@ -13,6 +13,8 @@ export const socials = [
     icon: 'intigriti',
     href: 'https://app.intigriti.com/researcher/profile/luq0x',
   },
+  { label: 'HackerOne', icon: 'hackerone', href: 'https://hackerone.com/luq0x' },
+  { label: 'Bugcrowd', icon: 'bugcrowd', href: 'https://bugcrowd.com/h/luq0x' },
   { label: 'X', icon: 'x', href: 'https://x.com/luq0xss' },
   {
     label: 'LinkedIn',

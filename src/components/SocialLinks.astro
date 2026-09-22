@@ -7,15 +7,18 @@ interface Props {
   lang: Locale;
   class?: string;
   showRss?: boolean;
+  grid?: boolean;
 }
 
-const { lang, class: className = '', showRss = true } = Astro.props;
+const { lang, class: className = '', showRss = true, grid = false } = Astro.props;
 const isMail = (href: string) => href.startsWith('mailto:');
 const item =
   'flex h-9 w-9 items-center justify-center text-hush transition-colors duration-150 hover:text-blood focus-visible:text-blood';
 ---
 
-<ul class:list={['flex flex-wrap items-center', !className.includes('gap-') && 'gap-1', className]}>
+<ul
+  class:list={[grid ? 'grid grid-cols-4 gap-y-1' : 'flex flex-wrap items-center gap-1', className]}
+>
   {
     socials.map((social) => (
       <li>

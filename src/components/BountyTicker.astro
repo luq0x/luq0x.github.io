@@ -1,0 +1,65 @@
+---
+import { bounties, type Severity } from '../config';
+
+const tone: Record<Severity, string> = {
+  Critical: 'bg-blood',
+  High: 'bg-blood/60',
+  Medium: 'bg-dim',
+  Low: 'bg-hush/60',
+};
+
+const duration = `${Math.max(bounties.length * 4, 30)}s`;
+---
+
+{
+  bounties.length > 0 && (
+    <div class="ticker -mx-5 sm:-mx-8 lg:-mx-12" style={`--ticker-duration: ${duration}`}>
+      <div class="ticker-inner py-1">
+        {[0, 1].map((copy) => (
+          <ul
+            class="flex shrink-0 items-stretch gap-3 pr-3"
+            aria-hidden={copy === 1 ? 'true' : undefined}
+          >
+            {bounties.map((bounty) => {
+              const program = bounty.href ? (
+                <a
+                  href={bounty.href}
+                  target="_blank"
+                  rel="noopener"
+                  tabindex={copy === 1 ? -1 : undefined}
+                  class="link-underline"
+                >
+                  {bounty.program}
+                </a>
+              ) : (
+                bounty.program
+              );
+              return (
+                <li class="panel corners corners-hover hover:border-hush/40 flex shrink-0 flex-col gap-3 px-4 py-3.5 transition-colors">
+                  <div class="flex items-center justify-between gap-6">
+                    <span class="meta text-[10px] whitespace-nowrap">{bounty.date}</span>
+                    <span class="text-blood font-mono text-[15px] font-medium whitespace-nowrap tabular-nums">
+                      {bounty.reward}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span
+                      class={`h-1.5 w-1.5 shrink-0 rounded-full ${bounty.severity ? tone[bounty.severity] : 'bg-hush/60'}`}
+                    />
+                    <span class="text-ink text-[14px] font-medium whitespace-nowrap">
+                      {bounty.type}
+                    </span>
+                    <span class="slash" aria-hidden="true">
+                      /
+                    </span>
+                    <span class="text-dim font-mono text-[12px] whitespace-nowrap">{program}</span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        ))}
+      </div>
+    </div>
+  )
+}

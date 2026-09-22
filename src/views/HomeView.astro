@@ -6,6 +6,7 @@ import SeverityTag from '../components/SeverityTag.astro';
 import RewardTag from '../components/RewardTag.astro';
 import Tag from '../components/Tag.astro';
 import Icon from '../components/Icon.astro';
+import BountyTicker from '../components/BountyTicker.astro';
 import { profile, bounties, certifications } from '../config';
 import { formatDate, isoDate } from '../lib/format';
 import { getWriteups, readingTimeOf, slugOf } from '../lib/writeups';
@@ -35,17 +36,6 @@ const stats = [
 
 const pad = (value: number | string) =>
   typeof value === 'number' && value < 10 ? String(value).padStart(2, '0') : String(value);
-
-const dot = (severity?: string) =>
-  severity === 'Critical'
-    ? 'bg-blood'
-    : severity === 'High'
-      ? 'bg-blood/60'
-      : severity === 'Medium'
-        ? 'bg-dim'
-        : 'bg-hush/60';
-
-const VISIBLE_BOUNTIES = 6;
 ---
 
 <BaseLayout lang={lang} title={s.siteTitle} rail={s.railHome}>
@@ -221,82 +211,21 @@ const VISIBLE_BOUNTIES = 6;
               {s.latestBounties}
             </h2>
           </div>
-          <span class="jp text-hush text-[12px]" aria-hidden="true">
-            賞金
-          </span>
+          <p class="meta flex items-center gap-2">
+            <span class="jp text-[11px] tracking-[0.2em]" aria-hidden="true">
+              賞金
+            </span>
+            <span class="slash" aria-hidden="true">
+              /
+            </span>
+            <span class="text-ink">{String(bounties.length).padStart(2, '0')}</span>
+          </p>
         </div>
 
-        <div class="panel mt-8 px-3 pt-2 pb-3 sm:px-5">
-          <div class="log-row meta border-rule border-b border-solid text-[10px] hover:bg-transparent">
-            <span>{s.colDate}</span>
-            <span class="hidden sm:block">{s.colProgram}</span>
-            <span>{s.colType}</span>
-            <span class="text-right">{s.colReward}</span>
-          </div>
-
-          <ul data-bounty-list>
-            {bounties.map((bounty, index) => (
-              <li
-                class="log-row"
-                hidden={index >= VISIBLE_BOUNTIES}
-                data-extra={index >= VISIBLE_BOUNTIES ? '' : undefined}
-              >
-                <span class="meta">{bounty.date}</span>
-                <span class="text-ink hidden truncate font-mono text-[12.5px] sm:block">
-                  {bounty.href ? (
-                    <a href={bounty.href} target="_blank" rel="noopener" class="link-underline">
-                      {bounty.program}
-                    </a>
-                  ) : (
-                    bounty.program
-                  )}
-                </span>
-                <span class="text-dim flex min-w-0 items-center gap-2.5 text-[13.5px]">
-                  <span class={`h-1.5 w-1.5 shrink-0 rounded-full ${dot(bounty.severity)}`} />
-                  <span class="truncate">{bounty.type}</span>
-                </span>
-                <span class="text-blood text-right font-mono text-[13px] tabular-nums">
-                  {bounty.reward}
-                </span>
-              </li>
-            ))}
-          </ul>
-
-          {bounties.length > VISIBLE_BOUNTIES && (
-            <button
-              type="button"
-              class="group/more meta hover:text-blood flex w-full items-center justify-center gap-2 pt-3.5 pb-1 transition-colors"
-              aria-expanded="false"
-              data-bounty-toggle
-              data-more={`${s.showAll} (${bounties.length})`}
-              data-less={s.showLess}
-            >
-              <span data-label>
-                {s.showAll} ({bounties.length})
-              </span>
-              <Icon
-                name="arrow"
-                class="h-3 w-3 rotate-90 transition-transform group-aria-expanded/more:-rotate-90"
-              />
-            </button>
-          )}
+        <div class="mt-8">
+          <BountyTicker />
         </div>
       </section>
     )
   }
-
-  <script is:inline>
-    (() => {
-      const toggle = document.querySelector('[data-bounty-toggle]');
-      if (!toggle) return;
-      const extras = document.querySelectorAll('[data-bounty-list] [data-extra]');
-      const label = toggle.querySelector('[data-label]');
-      toggle.addEventListener('click', () => {
-        const open = toggle.getAttribute('aria-expanded') !== 'true';
-        toggle.setAttribute('aria-expanded', String(open));
-        extras.forEach((row) => (row.hidden = !open));
-        if (label) label.textContent = open ? toggle.dataset.less : toggle.dataset.more;
-      });
-    })();
-  </script>
 </BaseLayout>

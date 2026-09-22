@@ -394,29 +394,47 @@
     pointer-events: none;
   }
 
-  /* ── bounty log ───────────────────────────────────────── */
+  /* ── bounty ticker ────────────────────────────────── */
 
-  .log-row {
-    display: grid;
-    grid-template-columns: 6.5rem 1fr auto;
-    align-items: baseline;
-    gap: 1rem;
-    padding: 0.7rem 0.25rem;
-    border-bottom: 1px dashed color-mix(in oklab, var(--color-rule) 80%, transparent);
-    transition: background-color 150ms ease;
+  .ticker {
+    overflow: hidden;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 3rem,
+      #000 calc(100% - 3rem),
+      transparent
+    );
   }
 
-  .log-row[hidden] {
-    display: none;
+  .ticker-inner {
+    display: flex;
+    width: max-content;
+    animation: ticker-scroll var(--ticker-duration, 60s) linear infinite;
   }
 
-  .log-row:hover {
-    background-color: color-mix(in oklab, var(--color-raise) 60%, transparent);
+  .ticker:hover .ticker-inner,
+  .ticker:focus-within .ticker-inner {
+    animation-play-state: paused;
   }
 
-  @media (min-width: 640px) {
-    .log-row {
-      grid-template-columns: 6.5rem 7rem 1fr auto;
+  @keyframes ticker-scroll {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker {
+      overflow-x: auto;
+      mask-image: none;
+    }
+
+    .ticker-inner {
+      animation: none;
     }
   }
 
