@@ -1,18 +1,35 @@
 ---
+import Icon from './Icon.astro';
 import { profile } from '../config';
-import { localeHref, type Locale } from '../i18n';
+import { localeHref, t, type Locale } from '../i18n';
 
 interface Props {
   lang: Locale;
 }
 
 const { lang } = Astro.props;
+const s = t(lang);
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-rule mt-24 border-t">
-  <div class="mx-auto flex max-w-[680px] flex-wrap items-center justify-between gap-3 px-5 py-6">
-    <p class="meta">© {year} {profile.name}</p>
-    <a href={localeHref(lang, '/rss.xml')} class="meta hover:text-blood transition-colors">RSS</a>
+<footer class="border-rule mt-16 border-t">
+  <div
+    class="mx-auto flex w-full max-w-[1080px] flex-wrap items-center justify-between gap-4 px-5 py-6 sm:px-8 lg:px-12"
+  >
+    <p class="meta flex items-center gap-2">
+      <span>© {year} {profile.name}</span>
+      <span class="slash">/</span>
+      <span class="jp text-[10px] tracking-[0.2em]">{s.railHome}</span>
+    </p>
+    <div class="flex items-center gap-5">
+      <a href={localeHref(lang, '/rss.xml')} class="meta hover:text-blood transition-colors">RSS</a>
+      <a
+        href="#conteudo"
+        class="meta hover:text-blood inline-flex items-center gap-1.5 transition-colors"
+      >
+        {s.backToTop}
+        <Icon name="arrow" class="h-3 w-3 -rotate-90" />
+      </a>
+    </div>
   </div>
 </footer>

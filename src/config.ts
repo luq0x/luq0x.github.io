@@ -14,7 +14,11 @@ export const socials = [
     href: 'https://app.intigriti.com/researcher/profile/luq0x',
   },
   { label: 'X', icon: 'x', href: 'https://x.com/luq0xss' },
-  { label: 'LinkedIn', icon: 'linkedin', href: 'https://www.linkedin.com/in/lucas-goncalo-de-morais/' },
+  {
+    label: 'LinkedIn',
+    icon: 'linkedin',
+    href: 'https://www.linkedin.com/in/lucas-goncalo-de-morais/',
+  },
   { label: 'E-mail', icon: 'email', href: 'mailto:luq0x@proton.me' },
 ] as const;
 
@@ -32,19 +36,19 @@ export const bounties: {
     program: 'Private',
     type: 'Account Takeover',
     reward: '€300',
-    date: '2026.07.15'
+    date: '2026.07.15',
   },
   {
     program: 'Private',
     type: 'Path Traversal',
     reward: '€300',
-    date: '2026.07.15'
+    date: '2026.07.15',
   },
   {
     program: 'Private',
     type: 'Path Traversal',
     reward: '€300',
-    date: '2026.05.29'
+    date: '2026.05.29',
   },
   {
     program: 'Private',
@@ -62,7 +66,7 @@ export const bounties: {
     program: 'Private',
     type: 'Reflected XSS',
     reward: '€187.50',
-    date: '2026.05.22'
+    date: '2026.05.22',
   },
   {
     program: 'Private',
@@ -74,13 +78,13 @@ export const bounties: {
     program: 'Private',
     type: 'AVS Bypass',
     reward: '€800',
-    date: '2026.05.04'
+    date: '2026.05.04',
   },
   {
     program: 'Private',
     type: 'ATO via Chained IDOR',
     reward: '€1,125',
-    date: '2026.04.15'
+    date: '2026.04.15',
   },
   {
     program: 'Private',
@@ -93,19 +97,19 @@ export const bounties: {
     type: 'RCE',
     severity: 'Critical',
     reward: '$150',
-    date: '2026.02.27'
+    date: '2026.02.27',
   },
   {
     program: 'Private',
     type: 'Reflected XSS',
     reward: '€975',
-    date: '2026.02.11'
+    date: '2026.02.11',
   },
   {
     program: 'Private',
     type: 'Cache Deception',
     reward: '€1,400',
-    date: '2026.01.16'
+    date: '2026.01.16',
   },
   {
     program: 'SBB',
@@ -118,13 +122,13 @@ export const bounties: {
     program: 'Private',
     type: 'Chained IDOR',
     reward: '€1,875',
-    date: '2025.11.07'
+    date: '2025.11.07',
   },
   {
     program: 'Private',
     type: 'IDOR',
     reward: '€975',
-    date: '2025.10.27'
+    date: '2025.10.27',
   },
 ];
 

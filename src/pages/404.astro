@@ -1,38 +1,58 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
 import { localeHref, strings } from '../i18n';
+
+const blocks = [
+  { lang: 'pt-br', s: strings['pt-br'] },
+  { lang: 'en', s: strings.en },
+] as const;
 ---
 
 <BaseLayout lang="pt-br" title="404" description={strings['pt-br'].notFoundBody} rail="迷子">
-  <div class="py-16">
-    <p class="meta text-blood">HTTP 404</p>
+  <div class="relative py-10 lg:py-16">
+    <p class="meta eyebrow text-blood">HTTP 404 / 迷子</p>
 
-    <h1 class="text-ink mt-3 text-[22px] font-medium tracking-[-0.02em]">
-      {strings['pt-br'].notFoundTitle}
-    </h1>
-    <p class="text-dim mt-2 max-w-[46ch] text-[14.5px]">{strings['pt-br'].notFoundBody}</p>
+    <p
+      class="glitch display text-ink mt-6 text-[120px] select-none sm:text-[200px]"
+      data-text="404"
+      aria-hidden="true"
+    >
+      404
+    </p>
 
-    <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13px]">
-      <a href={localeHref('pt-br')} class="link-underline text-ink">
-        {strings['pt-br'].backHome}
-      </a>
-      <a href={localeHref('pt-br', '/writeups')} class="link-underline text-ink">
-        {strings['pt-br'].writeupsTitle}
-      </a>
-    </div>
+    <div class="mt-12 grid gap-4 md:grid-cols-2">
+      {
+        blocks.map(({ lang, s }, index) => (
+          <section class="panel corners p-6" lang={s.htmlLang}>
+            {index === 0 ? (
+              <h1 class="text-ink text-[22px] font-medium tracking-[-0.02em]">{s.notFoundTitle}</h1>
+            ) : (
+              <h2 class="text-ink text-[22px] font-medium tracking-[-0.02em]">{s.notFoundTitle}</h2>
+            )}
+            <p class="text-dim mt-2 text-[14.5px]">{s.notFoundBody}</p>
 
-    <hr class="border-rule mt-12" />
-
-    <h2 class="text-ink mt-12 text-[22px] font-medium tracking-[-0.02em]">
-      {strings.en.notFoundTitle}
-    </h2>
-    <p class="text-dim mt-2 max-w-[46ch] text-[14.5px]">{strings.en.notFoundBody}</p>
-
-    <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13px]">
-      <a href={localeHref('en')} class="link-underline text-ink">{strings.en.backHome}</a>
-      <a href={localeHref('en', '/writeups')} class="link-underline text-ink">
-        {strings.en.writeupsTitle}
-      </a>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a
+                href={localeHref(lang)}
+                class="group bg-blood text-void hover:bg-ink inline-flex items-center gap-2 px-4 py-2.5 text-[13px] font-medium transition-colors"
+              >
+                {s.backHome}
+                <Icon
+                  name="arrow"
+                  class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+                />
+              </a>
+              <a
+                href={localeHref(lang, '/writeups')}
+                class="border-rule text-ink hover:border-blood hover:text-blood inline-flex items-center border px-4 py-2.5 text-[13px] transition-colors"
+              >
+                {s.writeupsTitle}
+              </a>
+            </div>
+          </section>
+        ))
+      }
     </div>
   </div>
 </BaseLayout>
