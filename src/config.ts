@@ -3,7 +3,7 @@ export const profile = {
   short: 'luq',
   location: 'BRAZIL',
   avatar: '/icon.jpeg',
-  photo: '/photo.jpg',
+  photo: '/photo.png',
   ogImage: '/og.png',
 };
 
