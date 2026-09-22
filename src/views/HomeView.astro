@@ -7,7 +7,7 @@ import RewardTag from '../components/RewardTag.astro';
 import Tag from '../components/Tag.astro';
 import Icon from '../components/Icon.astro';
 import BountyTicker from '../components/BountyTicker.astro';
-import { profile, bounties, certifications } from '../config';
+import { profile, bounties } from '../config';
 import { formatDate, isoDate } from '../lib/format';
 import { getWriteups, readingTimeOf, slugOf } from '../lib/writeups';
 import { localeHref, t, type Locale } from '../i18n';
@@ -21,21 +21,6 @@ const s = t(lang);
 const writeups = await getWriteups(lang);
 const [featured, ...rest] = writeups;
 const more = rest.slice(0, 2);
-
-const sinceYear = Math.min(
-  ...bounties.map((bounty) => Number(bounty.date.slice(0, 4))),
-  ...writeups.map((entry) => entry.data.pubDate.getUTCFullYear()),
-);
-
-const stats = [
-  { value: bounties.length, label: s.statBounties, jp: '賞金' },
-  { value: writeups.length, label: s.statWriteups, jp: '記録' },
-  { value: certifications.length, label: s.statCerts, jp: '経歴' },
-  { value: Number.isFinite(sinceYear) ? sinceYear : '—', label: s.statSince, jp: '研究' },
-];
-
-const pad = (value: number | string) =>
-  typeof value === 'number' && value < 10 ? String(value).padStart(2, '0') : String(value);
 ---
 
 <BaseLayout lang={lang} title={s.siteTitle} rail={s.railHome}>
@@ -75,32 +60,34 @@ const pad = (value: number | string) =>
     </div>
   </section>
 
-  <!-- stats -->
-  <section aria-label="Stats" class="border-rule grid grid-cols-2 border-y md:grid-cols-4">
-    {
-      stats.map((stat, index) => (
-        <div
-          class:list={[
-            'border-rule relative px-4 py-6 sm:px-6',
-            index % 2 === 1 && 'border-l',
-            index >= 2 && 'border-t md:border-t-0',
-            index === 2 && 'md:border-l',
-          ]}
-        >
-          <span
-            class="jp text-hush absolute top-3 right-3 text-[10px] tracking-[0.2em]"
-            aria-hidden="true"
-          >
-            {stat.jp}
-          </span>
-          <p class="text-ink font-mono text-[34px] leading-none font-medium tracking-[-0.04em] tabular-nums sm:text-[40px]">
-            {pad(stat.value)}
+  <!-- bounties -->
+  {
+    bounties.length > 0 && (
+      <section class="mt-4" aria-labelledby="bounties">
+        <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+          <div>
+            <p class="meta text-blood">01</p>
+            <h2 id="bounties" class="text-ink mt-2 text-[26px] font-medium tracking-[-0.025em]">
+              {s.latestBounties}
+            </h2>
+          </div>
+          <p class="meta flex items-center gap-2">
+            <span class="jp text-[11px] tracking-[0.2em]" aria-hidden="true">
+              賞金
+            </span>
+            <span class="slash" aria-hidden="true">
+              /
+            </span>
+            <span class="text-ink">{String(bounties.length).padStart(2, '0')}</span>
           </p>
-          <p class="meta mt-3">{stat.label}</p>
         </div>
-      ))
-    }
-  </section>
+
+        <div class="mt-8">
+          <BountyTicker />
+        </div>
+      </section>
+    )
+  }
 
   <!-- writeups -->
   {
@@ -108,7 +95,7 @@ const pad = (value: number | string) =>
       <section class="mt-20" aria-labelledby="latest">
         <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
           <div>
-            <p class="meta text-blood">01</p>
+            <p class="meta text-blood">{bounties.length > 0 ? '02' : '01'}</p>
             <h2 id="latest" class="text-ink mt-2 text-[26px] font-medium tracking-[-0.025em]">
               {s.latestWriteups}
             </h2>
@@ -196,35 +183,6 @@ const pad = (value: number | string) =>
             ))}
           </div>
         )}
-      </section>
-    )
-  }
-
-  <!-- bounties -->
-  {
-    bounties.length > 0 && (
-      <section class="mt-20" aria-labelledby="bounties">
-        <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
-          <div>
-            <p class="meta text-blood">{featured ? '02' : '01'}</p>
-            <h2 id="bounties" class="text-ink mt-2 text-[26px] font-medium tracking-[-0.025em]">
-              {s.latestBounties}
-            </h2>
-          </div>
-          <p class="meta flex items-center gap-2">
-            <span class="jp text-[11px] tracking-[0.2em]" aria-hidden="true">
-              賞金
-            </span>
-            <span class="slash" aria-hidden="true">
-              /
-            </span>
-            <span class="text-ink">{String(bounties.length).padStart(2, '0')}</span>
-          </p>
-        </div>
-
-        <div class="mt-8">
-          <BountyTicker />
-        </div>
       </section>
     )
   }
