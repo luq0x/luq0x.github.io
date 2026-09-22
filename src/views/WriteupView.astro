@@ -51,9 +51,12 @@ const { Content } = await render(entry);
 >
   <a
     href={localeHref(lang, '/writeups')}
-    class="meta hover:text-blood inline-flex items-center gap-1.5 transition-colors"
+    class="group meta hover:text-blood inline-flex items-center gap-2 transition-colors"
   >
-    <Icon name="arrow" class="h-3 w-3 rotate-180" />
+    <Icon
+      name="arrow"
+      class="h-3 w-3 rotate-180 transition-transform group-hover:-translate-x-0.5"
+    />
     {s.backToWriteups}
   </a>
 
@@ -82,12 +85,12 @@ const { Content } = await render(entry);
       }
 
       <h1
-        class="text-ink mt-4 text-[26px] leading-[1.25] font-medium tracking-[-0.025em] text-balance"
+        class="text-ink mt-5 text-[28px] leading-[1.2] font-medium tracking-[-0.03em] text-balance sm:text-[34px]"
       >
         {title}
       </h1>
 
-      <p class="text-dim mt-3 text-[15px] leading-relaxed">{summary}</p>
+      <p class="text-dim mt-4 text-[16px] leading-relaxed text-pretty">{summary}</p>
 
       <div class="meta mt-5 flex flex-wrap items-center gap-x-2 gap-y-1">
         <time datetime={isoDate(pubDate)}>{formatDate(pubDate, lang)}</time>
@@ -120,7 +123,7 @@ const { Content } = await render(entry);
 
     {
       cover && (
-        <figure class="border-rule mt-9 border">
+        <figure class="border-rule bg-raise mt-10 border p-1">
           <Image
             src={cover}
             alt={coverAlt ?? title}
@@ -132,7 +135,7 @@ const { Content } = await render(entry);
       )
     }
 
-    <div class="prose mt-9">
+    <div class="prose mt-10">
       <Content />
     </div>
   </article>
@@ -146,10 +149,12 @@ const { Content } = await render(entry);
         {older ? (
           <a
             href={localeHref(lang, `/writeups/${slugOf(older)}`)}
-            class="border-rule hover:border-blood border p-4 transition-colors"
+            class="group border-rule hover:border-blood hover:bg-raise/60 border p-4 transition-colors"
           >
             <span class="meta">{s.previous}</span>
-            <span class="text-ink mt-1.5 block text-[14.5px] leading-snug">{older.data.title}</span>
+            <span class="text-ink group-hover:text-blood mt-1.5 block text-[14.5px] leading-snug transition-colors">
+              {older.data.title}
+            </span>
           </a>
         ) : (
           <span />
@@ -158,10 +163,12 @@ const { Content } = await render(entry);
         {newer && (
           <a
             href={localeHref(lang, `/writeups/${slugOf(newer)}`)}
-            class="border-rule hover:border-blood border p-4 transition-colors sm:text-right"
+            class="group border-rule hover:border-blood hover:bg-raise/60 border p-4 transition-colors sm:text-right"
           >
             <span class="meta">{s.next}</span>
-            <span class="text-ink mt-1.5 block text-[14.5px] leading-snug">{newer.data.title}</span>
+            <span class="text-ink group-hover:text-blood mt-1.5 block text-[14.5px] leading-snug transition-colors">
+              {newer.data.title}
+            </span>
           </a>
         )}
       </nav>

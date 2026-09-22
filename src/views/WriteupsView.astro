@@ -29,7 +29,7 @@ const rows = entries.map((entry) => {
 });
 
 const chip =
-  'border border-rule px-2 py-1 font-mono text-[10.5px] tracking-[0.06em] text-dim uppercase transition-colors hover:text-ink aria-pressed:border-blood aria-pressed:text-blood';
+  'border border-rule px-2 py-1 font-mono text-[10.5px] tracking-[0.06em] text-dim uppercase transition-colors hover:border-hush hover:text-ink aria-pressed:border-blood aria-pressed:bg-blood/10 aria-pressed:text-blood';
 ---
 
 <BaseLayout
@@ -40,7 +40,7 @@ const chip =
   langTargets={langTargets}
 >
   <header>
-    <h1 class="text-ink text-[22px] font-medium tracking-[-0.02em]">{s.writeupsTitle}</h1>
+    <h1 class="text-ink text-[28px] font-medium tracking-[-0.025em]">{s.writeupsTitle}</h1>
     <p class="text-dim mt-2 text-[14.5px]">
       {entries.length}{' '}
       {entries.length === 1 ? s.postSingular : s.postPlural} · {s.writeupsIntro}
@@ -79,7 +79,7 @@ const chip =
       rows.map(({ entry, year, startsYear }) => (
         <>
           {startsYear && (
-            <h2 class="meta pt-10 pb-3 first:pt-4" data-year={year}>
+            <h2 class="meta section-title pt-10 pb-1 first:pt-4" data-year={year}>
               {year}
             </h2>
           )}
