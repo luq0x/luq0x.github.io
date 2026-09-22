@@ -38,6 +38,13 @@ export const bounties: {
   {
     program: 'Private',
     type: 'Account Takeover',
+    severity: 'Critical',
+    reward: '€700',
+    date: '2026.09.21',
+  },
+  {
+    program: 'Private',
+    type: 'Account Takeover',
     reward: '€300',
     date: '2026.07.15',
   },
