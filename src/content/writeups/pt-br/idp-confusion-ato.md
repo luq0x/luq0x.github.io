@@ -67,6 +67,8 @@ Se a plataforma confia cegamente no e-mail que o IdP entrega, a pergunta seguint
 
 Criei uma conta de teste no fluxo de sign-up do IdP e prestei atenção em cada resposta da API:
 
+### Validação da Conta
+
 ```
 POST /v1/registration/teacher/login-credentials HTTP/2
 Host: api.redacted-idp.com
@@ -100,7 +102,7 @@ HTTP/2 200 OK
 {"validationResult":"VALID","suggestion":null}
 ```
 
-### Validação de Professor
+### Criação da conta 
 
 ```
 POST /v1/registration/teacher HTTP/2
@@ -239,7 +241,7 @@ Pra qualquer assinante pago dessa plataforma cujo e-mail vazou em algum breach d
 - Reportado: `15/09/2026`
 - Triado: `17/09/2026`
 - Corrigido/Confirmado: `18/09/2026`
-- Severidade: Crítica
+- Severidade: `Exceptional`
 
 Keep Hacking!
 
