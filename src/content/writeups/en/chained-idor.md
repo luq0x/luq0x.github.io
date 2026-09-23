@@ -3,7 +3,7 @@ title: 'From a Simple Random ID to a Mass PII Leak'
 summary: 'A chain of IDORs that resulted in a massive PII leak, from names to GPS coordinates of a major e-commerce platform''s customers'
 pubDate: 2026-06-19
 tags: ['Bug Bounty', 'Web', 'IDOR']
-platform: 'Bug Bounty'
+platform: 'Intigriti'
 severity: 'High'
 reward: '€1,875'
 cover: '../../../assets/writeups/001/masspii-cover.png'

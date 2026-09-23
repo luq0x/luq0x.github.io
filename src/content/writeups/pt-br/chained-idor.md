@@ -3,7 +3,7 @@ title: 'De um simples ID randômico para um Mass PII Leak'
 summary: 'Uma cadeia de vulnerabilidades IDOR que resultou em um vazamento massivo de PII, desde nomes até coordenadas GPS de clientes de uma grande plataforma de e-commerce'
 pubDate: 2026-06-19
 tags: ['Bug Bounty', 'Web', 'IDOR']
-platform: 'Bug Bounty'
+platform: 'Intigriti'
 severity: 'High'
 reward: '€1,875'
 cover: '../../../assets/writeups/001/masspii-cover.png'
