@@ -67,6 +67,8 @@ If the platform blindly trusts the email the IdP hands it, the next question is 
 
 I created a test account in the IdP's sign-up flow and paid attention to every API response:
 
+### Account Validation
+
 ```
 POST /v1/registration/teacher/login-credentials HTTP/2
 Host: api.redacted-idp.com
@@ -91,7 +93,7 @@ POST /v1/address/validation HTTP/2
 Host: api.redacted-idp.com
 Content-Type: application/json
 
-{"city":"São Paulo","countryId":"BR","street":"Rua das Flores","streetNumber":"123","zipCode":"01000-000"}
+{"city":"São Paulo","countryId":"BR","street":"Rua Six da Seven","streetNumber":"123","zipCode":"01000-000"}
 ```
 
 ```
@@ -100,14 +102,14 @@ HTTP/2 200 OK
 {"validationResult":"VALID","suggestion":null}
 ```
 
-### Teacher Validation
+### Account Creation
 
 ```
 POST /v1/registration/teacher HTTP/2
 Host: api.redacted-idp.com
 Content-Type: application/json
 
-{"salutation":"SR","city":"XIQUE XIQUE","countryId":"BR","email":"user@example.com",
+{"salutation":"SR","city":"Xique Xique","countryId":"BR","email":"user@example.com",
  "firstName":"User","lastName":"da Silva","password":"StrongPass123!",
  "street":"Rua Six da Seven","streetNumber":"67","userName":"user","zipCode":"01234-000"}
 ```
@@ -239,7 +241,7 @@ For any paying subscriber of that platform whose email leaked in some third-part
 - Reported: `2026-09-15`
 - Triaged: `2026-09-17`
 - Fixed/Confirmed: `2026-09-18`
-- Severity: Critical
+- Severity: `Exceptional`
 
 Keep Hacking!
 
