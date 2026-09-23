@@ -3,7 +3,7 @@ title: 'Zero-Click Account Takeover: Stealing User Accounts Through Alternative 
 summary: 'An email verification flaw in the SSO (OpenID Connect) integration between an educational platform and a publisher''s identity provider allowed full takeover of any account, with no password, no token and no interaction from the victim.'
 pubDate: 2026-09-21
 tags: ['Bug Bounty', 'Web', 'SSO', 'OAuth', 'Account Takeover']
-platform: 'Bug Bounty'
+platform: 'Intigriti'
 severity: 'Critical'
 reward: '€700'
 cover: '../../../assets/writeups/002/idp-confusion-cover.jpg'
