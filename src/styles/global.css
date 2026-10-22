@@ -269,6 +269,11 @@
     color: var(--color-accent);
   }
 
+  .hero-binary canvas {
+    display: block;
+    width: 100%;
+  }
+
   .binary-rule {
     overflow: hidden;
     white-space: nowrap;

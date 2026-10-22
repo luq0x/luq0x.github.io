@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import BinaryArt from '../components/BinaryArt.astro';
+import BinaryHero from '../components/BinaryHero.astro';
 import BinaryRule from '../components/BinaryRule.astro';
 import WriteupCard from '../components/WriteupCard.astro';
 import BountyTicker from '../components/BountyTicker.astro';
@@ -21,7 +21,7 @@ const latest = writeups.slice(0, 4);
 <BaseLayout lang={lang} title={s.siteTitle}>
   <section class="pt-2">
     <h1 class="sr-only">{profile.name}</h1>
-    <BinaryArt />
+    <BinaryHero />
 
     <div class="mt-8 space-y-1.5">
       <p><span class="prompt">$</span> whoami</p>

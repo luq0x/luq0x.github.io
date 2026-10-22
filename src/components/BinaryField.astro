@@ -8,9 +8,9 @@
     const media = matchMedia('(min-width: 960px)');
     const still = matchMedia('(prefers-reduced-motion: reduce)');
 
-    const CELL_W = 22;
-    const CELL_H = 30;
-    const REACH = 170;
+    const CELL_W = 12;
+    const CELL_H = 16;
+    const REACH = 130;
     const FRAME_HALF = 416 + 14;
 
     let cols = 0;
@@ -35,7 +35,7 @@
       cols = Math.ceil(w / CELL_W);
       rows = Math.ceil(h / CELL_H);
       grid = Array.from({ length: cols * rows }, () => (Math.random() < 0.5 ? '0' : '1'));
-      ctx.font = '600 18px "JetBrains Mono Variable", ui-monospace, monospace';
+      ctx.font = '600 11px "JetBrains Mono Variable", ui-monospace, monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
     }
@@ -58,7 +58,7 @@
           const dist = Math.hypot(dx, dy);
           const near = animate && dist < REACH ? 1 - dist / REACH : 0;
 
-          if (animate && Math.random() < 0.0025 + near * 0.18) {
+          if (animate && Math.random() < 0.0015 + near * 0.16) {
             grid[i] = grid[i] === '0' ? '1' : '0';
           }
 

@@ -1,0 +1,172 @@
+---
+import BinaryArt from './BinaryArt.astro';
+---
+
+<div class="hero-binary" data-binary-hero role="img" aria-label="luq">
+  <canvas aria-hidden="true"></canvas>
+  <noscript><BinaryArt /></noscript>
+</div>
+
+<script is:inline>
+  (() => {
+    const root = document.querySelector('[data-binary-hero]');
+    const canvas = root?.querySelector('canvas');
+    if (!root || !canvas) return;
+    const ctx = canvas.getContext('2d');
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    const WORD = 'luq';
+    const FONT = '"JetBrains Mono Variable", ui-monospace, monospace';
+
+    let W = 0;
+    let H = 0;
+    let cellW = 0;
+    let cellH = 0;
+    let cols = 0;
+    let rows = 0;
+    let on = [];
+    let digits = [];
+    let raf = 0;
+    let last = 0;
+    const mouse = { x: -9999, y: -9999 };
+
+    function build() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      W = root.clientWidth;
+      cols = W > 600 ? 92 : 50;
+      cellW = W / cols;
+      cellH = cellW * 1.35;
+      H = Math.round((W * 0.4) / cellH) * cellH;
+      rows = Math.round(H / cellH);
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      canvas.style.width = `${W}px`;
+      canvas.style.height = `${H}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // rasterise the word with a real heavy font, stretched to fill the whole width
+      const off = document.createElement('canvas');
+      off.width = Math.round(W);
+      off.height = Math.round(H);
+      const o = off.getContext('2d', { willReadFrequently: true });
+      const size = H * 1.02;
+      o.font = `800 ${size}px ${FONT}`;
+      o.textBaseline = 'alphabetic';
+      const m = o.measureText(WORD);
+      const ascent = m.actualBoundingBoxAscent;
+      const descent = m.actualBoundingBoxDescent;
+      const textW = m.actualBoundingBoxRight + m.actualBoundingBoxLeft;
+      const fit = Math.min(1, (H * 0.96) / (ascent + descent));
+      o.font = `800 ${size * fit}px ${FONT}`;
+      const m2 = o.measureText(WORD);
+      const tw = m2.actualBoundingBoxRight + m2.actualBoundingBoxLeft;
+      const sx = Math.min(1.9, (W * 0.98) / tw);
+      o.save();
+      o.translate(W / 2, (H + (m2.actualBoundingBoxAscent - m2.actualBoundingBoxDescent)) / 2);
+      o.scale(sx, 1);
+      o.fillStyle = '#fff';
+      const tx = -(m2.actualBoundingBoxRight - m2.actualBoundingBoxLeft) / 2;
+      o.strokeStyle = '#fff';
+      o.lineJoin = 'round';
+      o.lineWidth = H * 0.07;
+      o.strokeText(WORD, tx, 0);
+      o.fillText(WORD, tx, 0);
+      o.restore();
+
+      const img = o.getImageData(0, 0, off.width, off.height).data;
+      on = new Array(cols * rows);
+      digits = new Array(cols * rows);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const px = Math.min(off.width - 1, Math.floor(c * cellW + cellW / 2));
+          const py = Math.min(off.height - 1, Math.floor(r * cellH + cellH / 2));
+          on[r * cols + c] = img[(py * off.width + px) * 4 + 3] > 120;
+          digits[r * cols + c] = Math.random() < 0.5 ? '0' : '1';
+        }
+      }
+      ctx.font = `700 ${cellW * 1.15}px ${FONT}`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+    }
+
+    function draw(t) {
+      ctx.clearRect(0, 0, W, H);
+      const animate = !still.matches;
+      // highlight band sweeping across the name
+      const period = 5200;
+      const phase = (t % period) / period;
+      const band = phase * (cols + 24) - 12;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const i = r * cols + c;
+          const x = c * cellW + cellW / 2;
+          const y = r * cellH + cellH / 2;
+          const dist = Math.hypot(x - mouse.x, y - mouse.y);
+          const near = animate && dist < 110 ? 1 - dist / 110 : 0;
+          const sweep = animate ? Math.max(0, 1 - Math.abs(c - band - r * 0.35) / 5) : 0;
+
+          if (animate && Math.random() < (on[i] ? 0.01 : 0.004) + near * 0.35 + sweep * 0.25) {
+            digits[i] = digits[i] === '0' ? '1' : '0';
+          }
+
+          if (on[i]) {
+            if (near > 0.25 || sweep > 0.35) {
+              ctx.fillStyle = '#ff3b30';
+              ctx.shadowColor = '#ff3b30';
+              ctx.shadowBlur = 10;
+              ctx.globalAlpha = 1;
+            } else {
+              ctx.fillStyle = '#fff';
+              ctx.shadowColor = 'rgba(255,255,255,0.55)';
+              ctx.shadowBlur = 6;
+              ctx.globalAlpha = 0.92;
+            }
+          } else {
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#ff3b30';
+            ctx.globalAlpha = 0.13 + near * 0.6 + sweep * 0.2;
+          }
+          ctx.fillText(digits[i], x, y);
+        }
+      }
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+    }
+
+    function loop(t) {
+      raf = requestAnimationFrame(loop);
+      if (t - last < 45) return;
+      last = t;
+      draw(t);
+    }
+
+    function start() {
+      cancelAnimationFrame(raf);
+      build();
+      if (still.matches) draw(0);
+      else raf = requestAnimationFrame(loop);
+    }
+
+    root.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+    });
+    root.addEventListener('mouseleave', () => {
+      mouse.x = mouse.y = -9999;
+    });
+    let timer = 0;
+    addEventListener('resize', () => {
+      clearTimeout(timer);
+      timer = setTimeout(start, 150);
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) cancelAnimationFrame(raf);
+      else start();
+    });
+    Promise.all([document.fonts?.load(`800 100px ${FONT}`, WORD), document.fonts?.ready]).then(
+      start,
+      start,
+    );
+  })();
+</script>
