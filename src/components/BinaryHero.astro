@@ -25,77 +25,9 @@ import BinaryArt from './BinaryArt.astro';
     let rows = 0;
     let on = [];
     let digits = [];
-    let fluid = null;
     let raf = 0;
     let last = 0;
     const mouse = { x: -9999, y: -9999 };
-
-    // Tiny fluid: an energy + velocity field that the pointer stirs, advects and diffuses.
-    function createFluid(cols, rows) {
-      const n = cols * rows;
-      let en = new Float32Array(n);
-      let vx = new Float32Array(n);
-      let vy = new Float32Array(n);
-      let en2 = new Float32Array(n);
-      let vx2 = new Float32Array(n);
-      let vy2 = new Float32Array(n);
-      const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
-
-      function inject(cx, cy, dx, dy, radius) {
-        const speed = Math.min(Math.hypot(dx, dy), 4);
-        const x0 = Math.max(0, Math.floor(cx - radius));
-        const x1 = Math.min(cols - 1, Math.ceil(cx + radius));
-        const y0 = Math.max(0, Math.floor(cy - radius));
-        const y1 = Math.min(rows - 1, Math.ceil(cy + radius));
-        for (let r = y0; r <= y1; r++) {
-          for (let c = x0; c <= x1; c++) {
-            const d = Math.hypot(c - cx, r - cy);
-            if (d >= radius) continue;
-            const f = (1 - d / radius) ** 2;
-            const i = r * cols + c;
-            en[i] = Math.min(1.6, en[i] + f * (0.18 + speed * 0.22));
-            vx[i] = clamp(vx[i] + dx * f * 0.7, -3, 3);
-            vy[i] = clamp(vy[i] + dy * f * 0.7, -3, 3);
-          }
-        }
-      }
-
-      function step() {
-        // advect (semi-Lagrangian) + diffuse + decay
-        for (let r = 0; r < rows; r++) {
-          for (let c = 0; c < cols; c++) {
-            const i = r * cols + c;
-            const sc = clamp(Math.round(c - vx[i] * 0.9), 0, cols - 1);
-            const sr = clamp(Math.round(r - vy[i] * 0.9), 0, rows - 1);
-            const j = sr * cols + sc;
-            const l = c > 0 ? j - 1 : j;
-            const rt = c < cols - 1 ? j + 1 : j;
-            const u = r > 0 ? j - cols : j;
-            const d = r < rows - 1 ? j + cols : j;
-            en2[i] = (en[j] * 0.52 + (en[l] + en[rt] + en[u] + en[d]) * 0.12) * 0.965;
-            vx2[i] = (vx[j] * 0.52 + (vx[l] + vx[rt] + vx[u] + vx[d]) * 0.12) * 0.965;
-            vy2[i] = (vy[j] * 0.52 + (vy[l] + vy[rt] + vy[u] + vy[d]) * 0.12) * 0.965;
-          }
-        }
-        [en, en2] = [en2, en];
-        [vx, vx2] = [vx2, vx];
-        [vy, vy2] = [vy2, vy];
-      }
-
-      return {
-        inject,
-        step,
-        get en() {
-          return en;
-        },
-        get vx() {
-          return vx;
-        },
-        get vy() {
-          return vy;
-        },
-      };
-    }
 
     function build() {
       const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -151,7 +83,6 @@ import BinaryArt from './BinaryArt.astro';
           digits[r * cols + c] = Math.random() < 0.5 ? '0' : '1';
         }
       }
-      fluid = createFluid(cols, rows);
       ctx.font = `700 ${cellW * 1.15}px ${FONT}`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -159,43 +90,33 @@ import BinaryArt from './BinaryArt.astro';
 
     function draw(t) {
       const animate = !still.matches;
-      if (animate) fluid.step();
       ctx.clearRect(0, 0, W, H);
-      // highlight band sweeping across the name
+      // glow band sweeping across the name
       const period = 5200;
-      const phase = (t % period) / period;
-      const band = phase * (cols + 24) - 12;
+      const band = ((t % period) / period) * (cols + 24) - 12;
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           const i = r * cols + c;
           const x = c * cellW + cellW / 2;
           const y = r * cellH + cellH / 2;
-          const near = animate ? Math.min(1, fluid.en[i]) : 0;
-          const sweep = animate ? Math.max(0, 1 - Math.abs(c - band - r * 0.35) / 5) : 0;
-
-          if (animate && Math.random() < (on[i] ? 0.01 : 0.004) + near * 0.3 + sweep * 0.25) {
-            digits[i] = digits[i] === '0' ? '1' : '0';
-          }
+          const near = animate ? Math.max(0, 1 - Math.hypot(x - mouse.x, y - mouse.y) / 120) : 0;
+          const sweep = animate ? Math.max(0, 1 - Math.abs(c - band - r * 0.35) / 6) : 0;
+          const glow = Math.min(1, Math.max(near, sweep));
 
           if (on[i]) {
-            if (near > 0.25 || sweep > 0.35) {
-              ctx.fillStyle = '#fff';
-              ctx.shadowColor = '#fff';
-              ctx.shadowBlur = 10;
-              ctx.globalAlpha = 1;
-            } else {
-              ctx.fillStyle = '#ff3b30';
-              ctx.shadowColor = 'rgba(255,59,48,0.6)';
-              ctx.shadowBlur = 9;
-              ctx.globalAlpha = 1;
-            }
+            const g = Math.round(59 + 196 * glow);
+            const b = Math.round(48 + 207 * glow);
+            ctx.fillStyle = `rgb(255, ${g}, ${b})`;
+            ctx.shadowColor = glow > 0.05 ? `rgba(255, ${g}, ${b}, 0.9)` : 'rgba(255,59,48,0.6)';
+            ctx.shadowBlur = 9 + glow * 10;
+            ctx.globalAlpha = 1;
           } else {
             ctx.shadowBlur = 0;
-            ctx.fillStyle = near > 0.1 ? '#fff' : '#ff3b30';
-            ctx.globalAlpha = 0.055 + near * 0.55 + sweep * 0.2;
+            ctx.fillStyle = '#ff3b30';
+            ctx.globalAlpha = 0.055 + glow * 0.22;
           }
-          ctx.fillText(digits[i], x + fluid.vx[i] * near * 4, y + fluid.vy[i] * near * 4);
+          ctx.fillText(digits[i], x, y);
         }
       }
       ctx.shadowBlur = 0;
@@ -218,13 +139,8 @@ import BinaryArt from './BinaryArt.astro';
 
     root.addEventListener('mousemove', (e) => {
       const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      if (fluid && mouse.x > -9000) {
-        fluid.inject(x / cellW, y / cellH, (x - mouse.x) / cellW, (y - mouse.y) / cellH, 6);
-      }
-      mouse.x = x;
-      mouse.y = y;
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
     });
     root.addEventListener('mouseleave', () => {
       mouse.x = mouse.y = -9999;
