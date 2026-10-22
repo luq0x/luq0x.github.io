@@ -3,15 +3,15 @@
 @import '@fontsource-variable/jetbrains-mono';
 
 @theme {
-  --color-bg: #0a0a0a;
-  --color-raise: #121212;
-  --color-rule: #242424;
-  --color-line: #3c3c3c;
-  --color-ink: #e6e6e6;
-  --color-dim: #9b9b9b;
-  --color-hush: #6c6c6c;
+  --color-bg: #000000;
+  --color-raise: #0c0c0c;
+  --color-rule: #2a2a2a;
+  --color-line: #4a4a4a;
+  --color-ink: #f5f5f5;
+  --color-dim: #bdbdbd;
+  --color-hush: #8c8c8c;
   --color-accent: #ff3b30;
-  --color-accent-dim: #7a2420;
+  --color-accent-dim: #8c211b;
   --color-crit: #ff3b30;
   --color-high: #ff8f86;
 
@@ -196,8 +196,8 @@
     word-break: break-all;
     font-size: 0.75rem;
     line-height: 1.15;
-    color: var(--color-line);
-    opacity: 0.6;
+    color: var(--color-accent);
+    opacity: 0.4;
     mask-image: linear-gradient(to bottom, #000, #000 70%, transparent);
   }
 
@@ -240,18 +240,24 @@
   /* ── binary / ascii art ───────────────────────────────── */
 
   .binary-art {
-    font-size: min(14px, calc((100vw - 3rem) / 52));
+    font-size: min(16px, calc((100vw - 3rem) / 46));
     line-height: 1.15;
     letter-spacing: 0;
     white-space: pre;
     user-select: none;
-    color: #2a2a2a;
+    color: #4a1612;
   }
 
   .binary-art b {
     font-weight: 700;
     color: #fff;
-    text-shadow: 0 0 8px rgb(255 255 255 / 0.25);
+    text-shadow: 0 0 10px rgb(255 255 255 / 0.3);
+  }
+
+  .binary-art i {
+    font-style: normal;
+    font-weight: 700;
+    color: var(--color-accent);
   }
 
   .binary-rule {
@@ -261,7 +267,8 @@
     font-size: 0.6875rem;
     line-height: 1;
     letter-spacing: 0.15em;
-    color: var(--color-rule);
+    color: var(--color-accent-dim);
+    opacity: 0.7;
     mask-image: linear-gradient(to right, #000 55%, transparent);
   }
 
@@ -619,7 +626,7 @@
 }
 
 .prose pre {
-  background-color: #070707 !important;
+  background-color: #000 !important;
   border: 1px solid var(--color-rule);
   padding: 1rem 1.15rem;
   overflow-x: auto;
