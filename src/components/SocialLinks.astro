@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 import { socials } from '../config';
 import { localeHref, type Locale } from '../i18n';
 
@@ -12,7 +13,7 @@ const { lang, class: className = '', showRss = true } = Astro.props;
 const isMail = (href: string) => href.startsWith('mailto:');
 ---
 
-<ul class:list={['flex flex-wrap items-center gap-x-4 gap-y-1', className]}>
+<ul class:list={['flex flex-wrap items-center gap-x-5 gap-y-2', className]}>
   {
     socials.map((social) => (
       <li>
@@ -20,8 +21,9 @@ const isMail = (href: string) => href.startsWith('mailto:');
           href={social.href}
           rel={isMail(social.href) ? undefined : 'me noopener'}
           target={isMail(social.href) ? undefined : '_blank'}
-          class="more"
+          class="social"
         >
+          <Icon name={social.icon} class="h-3.5 w-3.5 shrink-0" />
           {social.label.toLowerCase()}
         </a>
       </li>
@@ -30,7 +32,8 @@ const isMail = (href: string) => href.startsWith('mailto:');
   {
     showRss && (
       <li>
-        <a href={localeHref(lang, '/rss.xml')} class="more">
+        <a href={localeHref(lang, '/rss.xml')} class="social">
+          <Icon name="rss" class="h-3.5 w-3.5 shrink-0" />
           rss
         </a>
       </li>

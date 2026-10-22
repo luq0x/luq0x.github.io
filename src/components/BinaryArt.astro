@@ -1,17 +1,35 @@
 ---
-// 11 rows: ascender 0-2, x-height 3-8, descender 9-10
+// 14 rows: ascender 0-3, x-height 4-10, descender 11-13. Each pixel is two characters wide.
 const glyphs: Record<string, string[]> = {
-  l: ['1110', '0110', '0110', '0110', '0110', '0110', '0110', '0110', '0111', '0000', '0000'],
+  l: [
+    '1110',
+    '0110',
+    '0110',
+    '0110',
+    '0110',
+    '0110',
+    '0110',
+    '0110',
+    '0110',
+    '0110',
+    '0111',
+    '0000',
+    '0000',
+    '0000',
+  ],
   u: [
     '000000',
     '000000',
     '000000',
+    '000000',
     '110011',
     '110011',
     '110011',
     '110011',
     '110011',
+    '110111',
     '011111',
+    '000000',
     '000000',
     '000000',
   ],
@@ -19,28 +37,30 @@ const glyphs: Record<string, string[]> = {
     '000000',
     '000000',
     '000000',
+    '000000',
     '011111',
     '110011',
     '110011',
     '110011',
     '110011',
+    '110111',
     '011111',
+    '000011',
     '000011',
     '000011',
   ],
 };
 
 const word = 'luq';
-const padX = 8;
-const padY = 2;
+const padX = 5;
+const padY = 1;
 const gap = 2;
 
 const letters = [...word].map((ch) => glyphs[ch]);
-const rowsText = letters[0].length;
 const widths = letters.map((g) => g[0].length);
 const textWidth = widths.reduce((a, b) => a + b, 0) + gap * (letters.length - 1);
 const cols = textWidth + padX * 2;
-const rows = rowsText + padY * 2;
+const rows = letters[0].length + padY * 2;
 
 const on = new Set<string>();
 let x0 = padX;
@@ -61,11 +81,10 @@ const bit = () => {
 
 const lines = Array.from({ length: rows }, (_, y) =>
   Array.from({ length: cols }, (_, x) => {
-    const digit = bit();
-    if (on.has(`${x},${y}`)) return '<b>1</b>';
-    if (on.has(`${x - 1},${y - 1}`)) return '<i>0</i>';
-    return String(digit);
-  }).join(' '),
+    if (on.has(`${x},${y}`)) return '<b>11</b>';
+    if (on.has(`${x - 1},${y - 1}`)) return '<i>00</i>';
+    return `${bit()}${bit()}`;
+  }).join(''),
 );
 
 const art = lines.join('\n');

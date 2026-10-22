@@ -2,6 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import BinaryField from '../components/BinaryField.astro';
 import { t, type Locale } from '../i18n';
 import '../styles/global.css';
 
@@ -28,13 +29,6 @@ const {
 } = Astro.props;
 
 const s = t(lang);
-const edge = (() => {
-  let seed = 0xbeef;
-  return Array.from({ length: 3 * 400 }, () => {
-    seed = (seed * 1664525 + 1013904223) >>> 0;
-    return (seed >>> 16) & 1;
-  }).join('');
-})();
 ---
 
 <!doctype html>
@@ -51,18 +45,7 @@ const edge = (() => {
     />
   </head>
   <body class="relative min-h-dvh overflow-x-hidden">
-    {
-      edges && (
-        <>
-          <div class="edge edge-l hidden min-[960px]:block" aria-hidden="true">
-            {edge}
-          </div>
-          <div class="edge edge-r hidden min-[960px]:block" aria-hidden="true">
-            {edge}
-          </div>
-        </>
-      )
-    }
+    {edges && <BinaryField />}
     <a
       href="#conteudo"
       class="focus:bg-raise sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-3 focus:py-2"

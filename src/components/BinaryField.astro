@@ -1,0 +1,116 @@
+<canvas class="binary-field" aria-hidden="true" data-binary-field></canvas>
+
+<script is:inline>
+  (() => {
+    const canvas = document.querySelector('[data-binary-field]');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const media = matchMedia('(min-width: 960px)');
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+
+    const CELL_W = 22;
+    const CELL_H = 30;
+    const REACH = 170;
+    const FRAME_HALF = 416 + 14;
+
+    let cols = 0;
+    let rows = 0;
+    let grid = [];
+    let dpr = 1;
+    let w = 0;
+    let h = 0;
+    const mouse = { x: -9999, y: -9999 };
+    let raf = 0;
+    let last = 0;
+
+    function resize() {
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      w = innerWidth;
+      h = innerHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cols = Math.ceil(w / CELL_W);
+      rows = Math.ceil(h / CELL_H);
+      grid = Array.from({ length: cols * rows }, () => (Math.random() < 0.5 ? '0' : '1'));
+      ctx.font = '600 18px "JetBrains Mono Variable", ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+    }
+
+    function draw(time) {
+      ctx.clearRect(0, 0, w, h);
+      const left = w / 2 - FRAME_HALF;
+      const right = w / 2 + FRAME_HALF;
+      const animate = !still.matches;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * CELL_W + CELL_W / 2;
+          if (x > left && x < right) continue;
+          const y = r * CELL_H + CELL_H / 2;
+          const i = r * cols + c;
+
+          const dx = x - mouse.x;
+          const dy = y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          const near = animate && dist < REACH ? 1 - dist / REACH : 0;
+
+          if (animate && Math.random() < 0.0025 + near * 0.18) {
+            grid[i] = grid[i] === '0' ? '1' : '0';
+          }
+
+          const wave = animate ? 0.5 + 0.5 * Math.sin(time / 1400 + c * 0.35 + r * 0.22) : 0.5;
+          const edgeFade = Math.min(1, Math.abs(x - (x < left ? left : right)) / 220 + 0.35);
+          const base = (0.14 + wave * 0.2) * edgeFade;
+
+          if (near > 0.05) {
+            const mix = Math.round(255 * near * near);
+            ctx.fillStyle = `rgb(255, ${mix}, ${mix})`;
+            ctx.globalAlpha = Math.min(1, base + near * 0.9);
+          } else {
+            ctx.fillStyle = '#ff3b30';
+            ctx.globalAlpha = base;
+          }
+          ctx.fillText(grid[i], x, y);
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function loop(time) {
+      raf = requestAnimationFrame(loop);
+      if (time - last < 50) return;
+      last = time;
+      draw(time);
+    }
+
+    function start() {
+      cancelAnimationFrame(raf);
+      if (!media.matches) {
+        ctx.clearRect(0, 0, w, h);
+        return;
+      }
+      resize();
+      if (still.matches) draw(0);
+      else raf = requestAnimationFrame(loop);
+    }
+
+    addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+    document.addEventListener('mouseleave', () => {
+      mouse.x = mouse.y = -9999;
+    });
+    addEventListener('resize', start);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) cancelAnimationFrame(raf);
+      else start();
+    });
+    media.addEventListener('change', start);
+    (document.fonts?.ready ?? Promise.resolve()).then(start);
+  })();
+</script>
