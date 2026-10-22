@@ -23,30 +23,37 @@ const isActive = (href: string, exact: boolean) => {
   if (exact) return current === target;
   return current === target || current.startsWith(`${target}/`);
 };
-
-const path = `~/${profile.name}${current === '/' ? '' : current}/`;
 ---
 
-<header>
-  <div class="wrap flex items-center justify-between gap-4 py-3">
-    <a href={localeHref(lang)} class="prompt shrink-0">
-      &gt;<span
-        class="bg-accent animate-blink ml-1.5 inline-block h-[1em] w-[0.55em] translate-y-[0.15em]"
-        aria-hidden="true"></span>
-    </a>
-    <p class="meta truncate text-right" aria-hidden="true">{path}</p>
-  </div>
+<header class="wrap flex flex-wrap items-center justify-between gap-x-6 gap-y-3 pt-6 pb-5">
+  <a
+    href={localeHref(lang)}
+    class="flex items-center font-bold text-white"
+    aria-label={profile.name}
+  >
+    <span class="prompt mr-2">&gt;</span>{profile.name}<span
+      class="bg-accent animate-blink ml-1 inline-block h-[1em] w-[0.55em] translate-y-[0.12em]"
+      aria-hidden="true"></span>
+  </a>
 
-  <nav class="navbox" aria-label={s.navPrimary}>
-    {
-      nav.map((item) => (
-        <a href={item.href} aria-current={isActive(item.href, item.exact) ? 'page' : undefined}>
-          &gt; {item.label.toLowerCase()}
-        </a>
-      ))
-    }
-    <div class="flex items-center justify-center">
-      <LangSwitch lang={lang} targets={langTargets} />
-    </div>
-  </nav>
+  <div class="flex items-center gap-6">
+    <nav aria-label={s.navPrimary}>
+      <ul class="flex items-center gap-5">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="nav-link"
+                aria-current={isActive(item.href, item.exact) ? 'page' : undefined}
+              >
+                {item.label.toLowerCase()}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <LangSwitch lang={lang} targets={langTargets} />
+  </div>
 </header>

@@ -94,38 +94,34 @@
     padding-inline: 1.5rem;
   }
 
-  .navbox {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 1fr;
-    border-block: 1px solid var(--color-line);
+  .nav-link {
+    position: relative;
+    color: var(--color-hush);
+    transition: color 120ms ease;
   }
 
-  .navbox > * {
-    padding: 0.55rem 0.25rem;
-    text-align: center;
-    white-space: nowrap;
-    color: var(--color-dim);
-    transition:
-      background-color 120ms ease,
-      color 120ms ease;
+  .nav-link:hover {
+    color: #fff;
   }
 
-  .navbox > * + * {
-    border-left: 1px solid var(--color-line);
+  .nav-link[aria-current='page'] {
+    color: #fff;
   }
 
-  .navbox a:hover {
-    background-color: var(--color-ink);
-    color: var(--color-bg);
-  }
-
-  .navbox a[aria-current='page'] {
+  .nav-link[aria-current='page']::before {
+    content: '[';
+    position: absolute;
+    right: 100%;
+    margin-right: 0.35ch;
     color: var(--color-accent);
   }
 
-  .navbox a[aria-current='page']:hover {
-    color: var(--color-bg);
+  .nav-link[aria-current='page']::after {
+    content: ']';
+    position: absolute;
+    left: 100%;
+    margin-left: 0.35ch;
+    color: var(--color-accent);
   }
 
   /* ── type helpers ─────────────────────────────────────── */
