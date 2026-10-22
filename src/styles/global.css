@@ -3,17 +3,17 @@
 @import '@fontsource-variable/jetbrains-mono';
 
 @theme {
-  --color-bg: #0c0d0c;
-  --color-raise: #131513;
-  --color-rule: #232623;
-  --color-line: #3a3e3a;
-  --color-ink: #d6dad4;
-  --color-dim: #9aa19a;
-  --color-hush: #6b726b;
-  --color-accent: #5fd97f;
-  --color-accent-dim: #2f6b40;
-  --color-crit: #ff6b61;
-  --color-high: #e3b341;
+  --color-bg: #0a0a0a;
+  --color-raise: #121212;
+  --color-rule: #242424;
+  --color-line: #3c3c3c;
+  --color-ink: #e6e6e6;
+  --color-dim: #9b9b9b;
+  --color-hush: #6c6c6c;
+  --color-accent: #ff3b30;
+  --color-accent-dim: #7a2420;
+  --color-crit: #ff3b30;
+  --color-high: #ff8f86;
 
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
@@ -200,8 +200,8 @@
     word-break: break-all;
     font-size: 0.75rem;
     line-height: 1.15;
-    color: var(--color-accent-dim);
-    opacity: 0.55;
+    color: var(--color-line);
+    opacity: 0.6;
     mask-image: linear-gradient(to bottom, #000, #000 70%, transparent);
   }
 
@@ -249,13 +249,13 @@
     letter-spacing: 0;
     white-space: pre;
     user-select: none;
-    color: color-mix(in oklab, var(--color-accent-dim) 28%, transparent);
+    color: #2a2a2a;
   }
 
   .binary-art b {
     font-weight: 700;
-    color: var(--color-accent);
-    text-shadow: 0 0 8px color-mix(in oklab, var(--color-accent) 45%, transparent);
+    color: #fff;
+    text-shadow: 0 0 8px rgb(255 255 255 / 0.25);
   }
 
   .binary-rule {
@@ -540,7 +540,7 @@
 }
 
 .prose a {
-  color: var(--color-accent);
+  color: #fff;
   text-decoration: underline;
   text-decoration-color: var(--color-accent-dim);
   text-underline-offset: 4px;
@@ -548,6 +548,7 @@
 }
 
 .prose a:hover {
+  color: var(--color-accent);
   text-decoration-color: var(--color-accent);
 }
 
@@ -614,7 +615,7 @@
 
 .prose :not(pre) > code {
   font-size: 0.875em;
-  color: var(--color-accent);
+  color: #ff8f86;
   background-color: var(--color-raise);
   border: 1px solid var(--color-rule);
   padding: 0.08em 0.4em;
@@ -622,7 +623,7 @@
 }
 
 .prose pre {
-  background-color: #0a0b0a !important;
+  background-color: #070707 !important;
   border: 1px solid var(--color-rule);
   padding: 1rem 1.15rem;
   overflow-x: auto;
@@ -653,7 +654,7 @@
 
 .prose th {
   background-color: var(--color-raise);
-  color: var(--color-accent);
+  color: #fff;
   font-weight: 600;
 }
 
