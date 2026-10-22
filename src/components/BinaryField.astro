@@ -10,9 +10,9 @@
 
     const CELL_W = 12;
     const CELL_H = 16;
-    const REACH = 130;
     const FRAME_HALF = 416 + 14;
 
+    let fluid = null;
     let cols = 0;
     let rows = 0;
     let grid = [];
@@ -22,6 +22,73 @@
     const mouse = { x: -9999, y: -9999 };
     let raf = 0;
     let last = 0;
+
+    // Tiny fluid: an energy + velocity field that the pointer stirs, advects and diffuses.
+    function createFluid(cols, rows) {
+      const n = cols * rows;
+      let en = new Float32Array(n);
+      let vx = new Float32Array(n);
+      let vy = new Float32Array(n);
+      let en2 = new Float32Array(n);
+      let vx2 = new Float32Array(n);
+      let vy2 = new Float32Array(n);
+      const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+
+      function inject(cx, cy, dx, dy, radius) {
+        const speed = Math.min(Math.hypot(dx, dy), 4);
+        const x0 = Math.max(0, Math.floor(cx - radius));
+        const x1 = Math.min(cols - 1, Math.ceil(cx + radius));
+        const y0 = Math.max(0, Math.floor(cy - radius));
+        const y1 = Math.min(rows - 1, Math.ceil(cy + radius));
+        for (let r = y0; r <= y1; r++) {
+          for (let c = x0; c <= x1; c++) {
+            const d = Math.hypot(c - cx, r - cy);
+            if (d >= radius) continue;
+            const f = (1 - d / radius) ** 2;
+            const i = r * cols + c;
+            en[i] = Math.min(1.6, en[i] + f * (0.18 + speed * 0.22));
+            vx[i] = clamp(vx[i] + dx * f * 0.7, -3, 3);
+            vy[i] = clamp(vy[i] + dy * f * 0.7, -3, 3);
+          }
+        }
+      }
+
+      function step() {
+        // advect (semi-Lagrangian) + diffuse + decay
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const i = r * cols + c;
+            const sc = clamp(Math.round(c - vx[i] * 0.9), 0, cols - 1);
+            const sr = clamp(Math.round(r - vy[i] * 0.9), 0, rows - 1);
+            const j = sr * cols + sc;
+            const l = c > 0 ? j - 1 : j;
+            const rt = c < cols - 1 ? j + 1 : j;
+            const u = r > 0 ? j - cols : j;
+            const d = r < rows - 1 ? j + cols : j;
+            en2[i] = (en[j] * 0.52 + (en[l] + en[rt] + en[u] + en[d]) * 0.12) * 0.965;
+            vx2[i] = (vx[j] * 0.52 + (vx[l] + vx[rt] + vx[u] + vx[d]) * 0.12) * 0.965;
+            vy2[i] = (vy[j] * 0.52 + (vy[l] + vy[rt] + vy[u] + vy[d]) * 0.12) * 0.965;
+          }
+        }
+        [en, en2] = [en2, en];
+        [vx, vx2] = [vx2, vx];
+        [vy, vy2] = [vy2, vy];
+      }
+
+      return {
+        inject,
+        step,
+        get en() {
+          return en;
+        },
+        get vx() {
+          return vx;
+        },
+        get vy() {
+          return vy;
+        },
+      };
+    }
 
     function resize() {
       dpr = Math.min(devicePixelRatio || 1, 2);
@@ -35,12 +102,14 @@
       cols = Math.ceil(w / CELL_W);
       rows = Math.ceil(h / CELL_H);
       grid = Array.from({ length: cols * rows }, () => (Math.random() < 0.5 ? '0' : '1'));
+      fluid = createFluid(cols, rows);
       ctx.font = '600 11px "JetBrains Mono Variable", ui-monospace, monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
     }
 
     function draw(time) {
+      if (fluid && !still.matches) fluid.step();
       ctx.clearRect(0, 0, w, h);
       const left = w / 2 - FRAME_HALF;
       const right = w / 2 + FRAME_HALF;
@@ -53,28 +122,30 @@
           const y = r * CELL_H + CELL_H / 2;
           const i = r * cols + c;
 
-          const dx = x - mouse.x;
-          const dy = y - mouse.y;
-          const dist = Math.hypot(dx, dy);
-          const near = animate && dist < REACH ? 1 - dist / REACH : 0;
+          const e = animate ? Math.min(1, fluid.en[i]) : 0;
 
-          if (animate && Math.random() < 0.0015 + near * 0.16) {
+          if (animate && Math.random() < 0.0015 + e * 0.3) {
             grid[i] = grid[i] === '0' ? '1' : '0';
           }
 
-          const wave = animate ? 0.5 + 0.5 * Math.sin(time / 1400 + c * 0.35 + r * 0.22) : 0.5;
+          const warp = Math.sin(r * 0.11 + time / 2600) * 2.2;
+          const wave = animate ? 0.5 + 0.5 * Math.sin(c * 0.16 + warp + time / 1900) : 0.5;
           const edgeFade = Math.min(1, Math.abs(x - (x < left ? left : right)) / 220 + 0.35);
-          const base = (0.14 + wave * 0.2) * edgeFade;
+          const base = (0.12 + wave * 0.22) * edgeFade;
 
-          if (near > 0.05) {
-            const mix = Math.round(255 * near * near);
+          let px = x;
+          let py = y;
+          if (e > 0.04) {
+            const mix = Math.round(255 * Math.min(1, e * e * 1.6));
             ctx.fillStyle = `rgb(255, ${mix}, ${mix})`;
-            ctx.globalAlpha = Math.min(1, base + near * 0.9);
+            ctx.globalAlpha = Math.min(1, base + e * 0.95);
+            px += fluid.vx[i] * e * 5;
+            py += fluid.vy[i] * e * 5;
           } else {
             ctx.fillStyle = '#ff3b30';
             ctx.globalAlpha = base;
           }
-          ctx.fillText(grid[i], x, y);
+          ctx.fillText(grid[i], px, py);
         }
       }
       ctx.globalAlpha = 1;
@@ -99,6 +170,15 @@
     }
 
     addEventListener('mousemove', (e) => {
+      if (fluid && mouse.x > -9000) {
+        fluid.inject(
+          e.clientX / CELL_W,
+          e.clientY / CELL_H,
+          (e.clientX - mouse.x) / CELL_W,
+          (e.clientY - mouse.y) / CELL_H,
+          6,
+        );
+      }
       mouse.x = e.clientX;
       mouse.y = e.clientY;
     });
