@@ -1,5 +1,4 @@
 ---
-import Icon from './Icon.astro';
 import { socials } from '../config';
 import { localeHref, type Locale } from '../i18n';
 
@@ -7,30 +6,23 @@ interface Props {
   lang: Locale;
   class?: string;
   showRss?: boolean;
-  grid?: boolean;
 }
 
-const { lang, class: className = '', showRss = true, grid = false } = Astro.props;
+const { lang, class: className = '', showRss = true } = Astro.props;
 const isMail = (href: string) => href.startsWith('mailto:');
-const item =
-  'flex h-9 w-9 items-center justify-center text-hush transition-colors duration-150 hover:text-blood focus-visible:text-blood';
 ---
 
-<ul
-  class:list={[grid ? 'grid grid-cols-4 gap-y-1' : 'flex flex-wrap items-center gap-1', className]}
->
+<ul class:list={['flex flex-wrap items-center gap-x-4 gap-y-1', className]}>
   {
     socials.map((social) => (
       <li>
         <a
           href={social.href}
-          aria-label={social.label}
-          title={social.label}
           rel={isMail(social.href) ? undefined : 'me noopener'}
           target={isMail(social.href) ? undefined : '_blank'}
-          class={item}
+          class="more"
         >
-          <Icon name={social.icon} />
+          {social.label.toLowerCase()}
         </a>
       </li>
     ))
@@ -38,8 +30,8 @@ const item =
   {
     showRss && (
       <li>
-        <a href={localeHref(lang, '/rss.xml')} aria-label="RSS" title="RSS" class={item}>
-          <Icon name="rss" />
+        <a href={localeHref(lang, '/rss.xml')} class="more">
+          rss
         </a>
       </li>
     )

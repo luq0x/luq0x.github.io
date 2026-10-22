@@ -1,0 +1,10 @@
+---
+let seed = 0x5eed;
+const bit = () => {
+  seed = (seed * 1664525 + 1013904223) >>> 0;
+  return (seed >>> 16) & 1;
+};
+const line = Array.from({ length: 140 }, bit).join('');
+---
+
+<div class="binary-rule" aria-hidden="true">{line}</div>

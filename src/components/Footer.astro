@@ -1,7 +1,8 @@
 ---
-import Icon from './Icon.astro';
+import BinaryRule from './BinaryRule.astro';
+import SocialLinks from './SocialLinks.astro';
 import { profile } from '../config';
-import { localeHref, t, type Locale } from '../i18n';
+import { t, type Locale } from '../i18n';
 
 interface Props {
   lang: Locale;
@@ -12,24 +13,13 @@ const s = t(lang);
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-rule mt-16 border-t">
-  <div
-    class="mx-auto flex w-full max-w-[1080px] flex-wrap items-center justify-between gap-4 px-5 py-6 sm:px-8 lg:px-12"
-  >
-    <p class="meta flex items-center gap-2">
+<footer class="wrap mt-20 pb-8">
+  <BinaryRule />
+  <div class="mt-5 flex flex-wrap items-start justify-between gap-x-8 gap-y-4">
+    <SocialLinks lang={lang} />
+    <p class="meta flex items-center gap-3">
       <span>© {year} {profile.name}</span>
-      <span class="slash">/</span>
-      <span class="jp text-[10px] tracking-[0.2em]">{s.railHome}</span>
+      <a href="#conteudo" class="more">{s.backToTop.toLowerCase()} ↑</a>
     </p>
-    <div class="flex items-center gap-5">
-      <a href={localeHref(lang, '/rss.xml')} class="meta hover:text-blood transition-colors">RSS</a>
-      <a
-        href="#conteudo"
-        class="meta hover:text-blood inline-flex items-center gap-1.5 transition-colors"
-      >
-        {s.backToTop}
-        <Icon name="arrow" class="h-3 w-3 -rotate-90" />
-      </a>
-    </div>
   </div>
 </footer>

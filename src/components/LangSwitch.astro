@@ -9,23 +9,23 @@ interface Props {
 
 const { lang, targets, class: className = '' } = Astro.props;
 
-const labels: Record<Locale, string> = { 'pt-br': 'PT', en: 'EN' };
+const labels: Record<Locale, string> = { 'pt-br': 'pt', en: 'en' };
 ---
 
-<nav class:list={['flex items-center gap-2', className]} aria-label="Language">
+<nav class:list={['flex items-center gap-1.5', className]} aria-label="Language">
   {
     locales.map((locale, index) => (
       <>
         {index > 0 && (
-          <span class="text-hush" aria-hidden="true">
-            /
+          <span class="sep" aria-hidden="true">
+            |
           </span>
         )}
         <a
           href={targets?.[locale] ?? localeHref(locale)}
           hreflang={locale === 'en' ? 'en-US' : 'pt-BR'}
           aria-current={locale === lang ? 'true' : undefined}
-          class:list={['meta hover:text-ink transition-colors', locale === lang && 'text-blood']}
+          class:list={[locale === lang ? 'text-accent' : 'text-hush hover:text-ink']}
         >
           {labels[locale]}
         </a>

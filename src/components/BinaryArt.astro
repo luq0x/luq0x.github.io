@@ -1,0 +1,48 @@
+---
+const glyphs: Record<string, string[]> = {
+  l: ['01100', '00100', '00100', '00100', '00100', '00100', '01110'],
+  u: ['10001', '10001', '10001', '10001', '10001', '10011', '01101'],
+  q: ['01110', '10001', '10001', '10001', '10101', '10010', '01101'],
+  '0': ['01110', '10011', '10101', '10101', '10101', '11001', '01110'],
+  x: ['10001', '10001', '01010', '00100', '01010', '10001', '10001'],
+};
+
+const word = 'luq0x';
+const padX = 4;
+const padY = 2;
+const gap = 1;
+
+const letters = [...word].map((ch) => glyphs[ch]);
+const textWidth = letters.length * 5 + (letters.length - 1) * gap;
+const cols = textWidth + padX * 2;
+const rows = 7 + padY * 2;
+
+const on = new Set<string>();
+letters.forEach((glyph, index) => {
+  const x0 = padX + index * (5 + gap);
+  glyph.forEach((line, y) => {
+    [...line].forEach((cell, x) => {
+      if (cell === '1') on.add(`${x0 + x},${padY + y}`);
+    });
+  });
+});
+
+let seed = 0x1ee7;
+const bit = () => {
+  seed = (seed * 1664525 + 1013904223) >>> 0;
+  return (seed >>> 16) & 1;
+};
+
+const lines = Array.from({ length: rows }, (_, y) =>
+  Array.from({ length: cols }, (_, x) => {
+    const digit = bit();
+    return on.has(`${x},${y}`) ? '<b>1</b>' : String(digit);
+  }).join(' '),
+);
+
+const art = lines.join('\n');
+---
+
+<div role="img" aria-label="luq0x">
+  <pre class="binary-art" aria-hidden="true" set:html={art} />
+</div>

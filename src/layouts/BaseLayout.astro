@@ -1,6 +1,6 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import Sidebar from '../components/Sidebar.astro';
+import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { t, type Locale } from '../i18n';
 import '../styles/global.css';
@@ -12,9 +12,8 @@ interface Props {
   type?: 'website' | 'article';
   publishedTime?: Date;
   tags?: string[];
-  rail?: string;
-  width?: 'read' | 'wide';
   langTargets?: Partial<Record<Locale, string>>;
+  edges?: boolean;
 }
 
 const {
@@ -24,12 +23,18 @@ const {
   type,
   publishedTime,
   tags,
-  rail,
-  width = 'wide',
   langTargets,
+  edges = true,
 } = Astro.props;
 
 const s = t(lang);
+const edge = (() => {
+  let seed = 0xbeef;
+  return Array.from({ length: 3 * 400 }, () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return (seed >>> 16) & 1;
+  }).join('');
+})();
 ---
 
 <!doctype html>
@@ -45,30 +50,31 @@ const s = t(lang);
       langTargets={langTargets}
     />
   </head>
-  <body class="min-h-dvh">
-    <div class="wallpaper-glow" aria-hidden="true"></div>
-    <div class="wallpaper" aria-hidden="true"></div>
-    <div class="scanlines" aria-hidden="true"></div>
-
+  <body class="relative min-h-dvh overflow-x-hidden">
+    {
+      edges && (
+        <>
+          <div class="edge edge-l hidden min-[960px]:block" aria-hidden="true">
+            {edge}
+          </div>
+          <div class="edge edge-r hidden min-[960px]:block" aria-hidden="true">
+            {edge}
+          </div>
+        </>
+      )
+    }
     <a
       href="#conteudo"
-      class="focus:bg-raise sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-3 focus:py-2 focus:text-sm"
+      class="focus:bg-raise sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-3 focus:py-2"
     >
       {s.skipToContent}
     </a>
 
-    <Sidebar lang={lang} rail={rail} langTargets={langTargets} />
+    <div class="frame flex flex-col">
+      <Header lang={lang} langTargets={langTargets} />
 
-    <div class="shell-main flex min-h-dvh flex-col">
-      <main id="conteudo" class="flex-1">
-        <div
-          class:list={[
-            'mx-auto w-full px-5 pt-10 pb-16 sm:px-8 lg:px-12 lg:pt-16',
-            width === 'read' ? 'max-w-[760px]' : 'max-w-[1080px]',
-          ]}
-        >
-          <slot />
-        </div>
+      <main id="conteudo" class="wrap flex-1 pt-8">
+        <slot />
       </main>
 
       <Footer lang={lang} />

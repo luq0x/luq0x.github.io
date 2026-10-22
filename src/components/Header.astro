@@ -1,0 +1,52 @@
+---
+import LangSwitch from './LangSwitch.astro';
+import { profile } from '../config';
+import { localeHref, t, type Locale } from '../i18n';
+
+interface Props {
+  lang: Locale;
+  langTargets?: Partial<Record<Locale, string>>;
+}
+
+const { lang, langTargets } = Astro.props;
+const s = t(lang);
+
+const nav = [
+  { label: s.navHome, href: localeHref(lang), exact: true },
+  { label: s.navWriteups, href: localeHref(lang, '/writeups'), exact: false },
+  { label: s.navAbout, href: localeHref(lang, '/about'), exact: false },
+];
+
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string, exact: boolean) => {
+  const target = href.replace(/\/$/, '') || '/';
+  if (exact) return current === target;
+  return current === target || current.startsWith(`${target}/`);
+};
+
+const path = `~/${profile.name}${current === '/' ? '' : current}/`;
+---
+
+<header>
+  <div class="wrap flex items-center justify-between gap-4 py-3">
+    <a href={localeHref(lang)} class="prompt shrink-0">
+      &gt;<span
+        class="bg-accent animate-blink ml-1.5 inline-block h-[1em] w-[0.55em] translate-y-[0.15em]"
+        aria-hidden="true"></span>
+    </a>
+    <p class="meta truncate text-right" aria-hidden="true">{path}</p>
+  </div>
+
+  <nav class="navbox" aria-label={s.navPrimary}>
+    {
+      nav.map((item) => (
+        <a href={item.href} aria-current={isActive(item.href, item.exact) ? 'page' : undefined}>
+          &gt; {item.label.toLowerCase()}
+        </a>
+      ))
+    }
+    <div class="flex items-center justify-center">
+      <LangSwitch lang={lang} targets={langTargets} />
+    </div>
+  </nav>
+</header>

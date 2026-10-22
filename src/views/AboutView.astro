@@ -26,82 +26,53 @@ const langTargets = Object.fromEntries(
   lang={lang}
   title={`${s.aboutTitle} — ${s.siteTitle}`}
   description={s.aboutDescription}
-  rail={s.railAbout}
   langTargets={langTargets}
 >
-  <header class="relative pt-2 pb-12">
-    <span
-      class="jp outline-text pointer-events-none absolute -top-4 right-0 hidden text-[120px] leading-none select-none md:block"
-      aria-hidden="true"
-    >
-      {s.railAbout}
-    </span>
-    <p class="meta eyebrow text-blood">{s.railAbout} / {s.profile}</p>
-    <h1 class="display text-ink mt-5 text-[56px] sm:text-[80px]">{s.aboutTitle}</h1>
-  </header>
+  <h1 class="text-ink text-[1.375rem] font-bold"><span class="prompt">$</span> cat about.md</h1>
 
-  <div class="grid gap-10 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-14">
-    <aside>
-      <div class="panel corners lg:sticky lg:top-10">
-        <div class="border-rule relative border-b p-4">
-          <div class="grid-bg border-rule relative aspect-[4/5] overflow-hidden border">
-            <img
-              src={url(photo)}
-              alt={profile.name}
-              width="280"
-              height="350"
-              loading="eager"
-              class="h-full w-full object-cover"
-            />
-          </div>
-          <div class="mt-4 flex items-end justify-between gap-3">
-            <div>
-              <p class="text-ink text-[22px] leading-none font-semibold tracking-[-0.03em]">
-                {profile.name}
-              </p>
-              <p class="meta mt-2 text-[10px]">{profile.location}</p>
-            </div>
-            <span class="jp text-hush text-[11px]">{s.railHome}</span>
-          </div>
-        </div>
-
-        <p class="text-blood border-rule border-b px-4 py-3 text-[13px]">{s.tagline}</p>
-
-        {
-          certifications.length > 0 && (
-            <div class="border-rule border-b px-4 py-4">
-              <h2 class="meta text-[10px]">{s.certifications}</h2>
-              <ul class="mt-3 space-y-2">
-                {certifications.map((cert) => (
-                  <li class="flex items-baseline justify-between gap-3">
-                    <span class="text-ink font-mono text-[13px]">{cert.name}</span>
-                    <span class="meta text-[10px]">
-                      {cert.issuer} / {cert.year}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )
-        }
-
-        <div class="px-4 py-3">
-          <h2 class="sr-only">{s.contact}</h2>
-          <SocialLinks lang={lang} grid class="justify-items-center" />
-        </div>
-      </div>
-    </aside>
+  <div class="mt-8 grid gap-8 sm:grid-cols-[12rem_minmax(0,1fr)]">
+    <div>
+      <img
+        src={url(photo)}
+        alt={profile.name}
+        width="192"
+        height="240"
+        loading="eager"
+        class="border-rule aspect-[4/5] w-full max-w-48 border object-cover grayscale transition hover:grayscale-0"
+      />
+      <p class="meta mt-2">{profile.name} · {profile.location}</p>
+    </div>
 
     <div class="min-w-0">
-      <p
-        class="text-ink text-[22px] leading-[1.45] font-medium tracking-[-0.02em] text-pretty sm:text-[26px]"
-      >
-        {lead}
-      </p>
-
-      <div class="text-dim mt-8 space-y-5 text-[16px] leading-[1.85]">
+      <p class="text-ink text-[1.0625rem] leading-[1.7] font-semibold text-pretty">{lead}</p>
+      <div class="text-dim mt-5 space-y-4 leading-[1.85]">
         {bio.map((paragraph) => <p>{paragraph}</p>)}
       </div>
     </div>
   </div>
+
+  {
+    certifications.length > 0 && (
+      <section class="mt-12">
+        <h2 class="h-section">
+          <span>{s.certifications.toLowerCase()}</span>
+        </h2>
+        <ul class="mt-3 space-y-1">
+          {certifications.map((cert) => (
+            <li class="leader">
+              <span class="text-ink">{cert.name}</span>
+              <span class="meta">
+                {cert.issuer} · {cert.year}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section class="mt-12">
+    <h2 class="h-section"><span>{s.contact.toLowerCase()}</span></h2>
+    <SocialLinks lang={lang} class="mt-3" />
+  </section>
 </BaseLayout>

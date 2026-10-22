@@ -1,58 +1,47 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Icon from '../components/Icon.astro';
 import { localeHref, strings } from '../i18n';
 
 const blocks = [
   { lang: 'pt-br', s: strings['pt-br'] },
   { lang: 'en', s: strings.en },
 ] as const;
+
+const art = [
+  ' _  _    ___  _  _  ',
+  '| || |  / _ \\| || | ',
+  '| || |_| | | | || |_',
+  '|__   _| |_| |__   _|',
+  '   |_|  \\___/   |_|  ',
+].join('\n');
 ---
 
-<BaseLayout lang="pt-br" title="404" description={strings['pt-br'].notFoundBody} rail="迷子">
-  <div class="relative py-10 lg:py-16">
-    <p class="meta eyebrow text-blood">HTTP 404 / 迷子</p>
+<BaseLayout lang="pt-br" title="404" description={strings['pt-br'].notFoundBody}>
+  <pre class="ascii text-[0.8125rem] sm:text-base" aria-hidden="true">{art}</pre>
 
-    <p
-      class="glitch display text-ink mt-6 text-[120px] select-none sm:text-[200px]"
-      data-text="404"
-      aria-hidden="true"
-    >
-      404
-    </p>
+  <p class="mt-6"><span class="prompt">$</span> cd {'$OLDPWD'}</p>
+  <p class="text-crit pl-4">bash: 404: No such file or directory</p>
 
-    <div class="mt-12 grid gap-4 md:grid-cols-2">
-      {
-        blocks.map(({ lang, s }, index) => (
-          <section class="panel corners p-6" lang={s.htmlLang}>
-            {index === 0 ? (
-              <h1 class="text-ink text-[22px] font-medium tracking-[-0.02em]">{s.notFoundTitle}</h1>
-            ) : (
-              <h2 class="text-ink text-[22px] font-medium tracking-[-0.02em]">{s.notFoundTitle}</h2>
-            )}
-            <p class="text-dim mt-2 text-[14.5px]">{s.notFoundBody}</p>
-
-            <div class="mt-6 flex flex-wrap gap-3">
-              <a
-                href={localeHref(lang)}
-                class="group bg-blood text-void hover:bg-ink inline-flex items-center gap-2 px-4 py-2.5 text-[13px] font-medium transition-colors"
-              >
-                {s.backHome}
-                <Icon
-                  name="arrow"
-                  class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-                />
-              </a>
-              <a
-                href={localeHref(lang, '/writeups')}
-                class="border-rule text-ink hover:border-blood hover:text-blood inline-flex items-center border px-4 py-2.5 text-[13px] transition-colors"
-              >
-                {s.writeupsTitle}
-              </a>
-            </div>
-          </section>
-        ))
-      }
-    </div>
+  <div class="mt-10 space-y-8">
+    {
+      blocks.map(({ lang, s }, index) => (
+        <section lang={s.htmlLang}>
+          {index === 0 ? (
+            <h1 class="text-ink font-bold">{s.notFoundTitle}</h1>
+          ) : (
+            <h2 class="text-ink font-bold">{s.notFoundTitle}</h2>
+          )}
+          <p class="text-dim mt-1">{s.notFoundBody}</p>
+          <p class="mt-3 flex gap-5">
+            <a href={localeHref(lang)} class="link">
+              {s.backHome.toLowerCase()}
+            </a>
+            <a href={localeHref(lang, '/writeups')} class="link">
+              {s.writeupsTitle.toLowerCase()}
+            </a>
+          </p>
+        </section>
+      ))
+    }
   </div>
 </BaseLayout>
